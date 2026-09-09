@@ -33,10 +33,11 @@ export default function HomePage() {
     const handleScroll = () => {
       if (!heroTrackRef.current) return;
       const rect = heroTrackRef.current.getBoundingClientRect();
-      const totalScrollable = rect.height - window.innerHeight;
+      const topOffset = window.innerWidth >= 640 ? 64 : 56;
+      const totalScrollable = rect.height - (window.innerHeight - topOffset);
       if (totalScrollable <= 0) return;
 
-      const progress = Math.min(Math.max(-rect.top / totalScrollable, 0), 1);
+      const progress = Math.min(Math.max((topOffset - rect.top) / totalScrollable, 0), 1);
       setScrollProgress(progress);
 
       if (!isPlaying && video && video.duration && !isNaN(video.duration)) {
@@ -114,17 +115,17 @@ export default function HomePage() {
   const scrollIndicatorOpacity = Math.max(0, 1 - scrollProgress * 4.5);
 
   return (
-    <main className="min-h-screen bg-[#080808] text-[#EDEDED] overflow-x-hidden font-sans">
+    <main className="min-h-screen bg-[#080808] text-[#EDEDED] font-sans">
       
       {/* SECTION 1: SCROLL-DRIVEN HERO TRACK (Interactive Scrollytelling) */}
       <section 
         ref={heroTrackRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative min-h-[250vh] sm:min-h-[280vh] border-b border-[#141414]"
+        className="relative min-h-[300vh] sm:min-h-[320vh] border-b border-[#141414]"
       >
-        {/* Pinned Viewport Container */}
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-start justify-start">
+        {/* Pinned Viewport Container: Locked in place during 300vh scroll */}
+        <div className="sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] w-full overflow-hidden flex items-start justify-start">
 
           {/* Video Layer with Scroll Parallax & Zoom */}
           <div 
