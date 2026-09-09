@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  role          String   @default("STAFF") // ADMIN, MANAGER, STAFF
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  AdminNote     AdminNote[]
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  email     String   
+  postcode  String
+  createdAt DateTime @default(now())
+  Vehicle   Vehicle[]
+  Quote     Quote[]
+}
+
+model Vehicle {
+  id         String   @id @default(cuid())
+  customerId String
+  regNumber  String   
+  make       String?
+  model      String?
+  year       Int?
+  colour     String?
+  createdAt  DateTime @default(now())
+  Customer   Customer @relation(fields: [customerId], references: [id])
+  Quote      Quote[]
+}
+
+model Quote {
+  id             String   @id @default(cuid())
+  quoteId        String   @unique 
+  customerId     String
+  vehicleId      String
+  serviceType    String   // Commma separated if multiple
+  description    String?
+  preferredDate  String?
+  contactMethod  String   // PHONE, EMAIL, WHATSAPP
+  status         String   @default("NEW") // NEW, REVIEWING, QUOTED, APPROVED, BOOKED, IN_PROGRESS, COMPLETED, CANCELLED
+  amount         Float?
+  utmSource      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  Customer       Customer @relation(fields: [customerId], references: [id])
+  Vehicle        Vehicle  @relation(fields: [vehicleId], references: [id])
+  QuoteImage     QuoteImage[]
+  AdminNote      AdminNote[]
+  Booking        Booking?
+}
+
+model QuoteImage {
+  id        String   @id @default(cuid())
+  quoteId   String
+  imageUrl  String
+  fileName  String
+  fileSize  Int
+  mimeType  String
+  createdAt DateTime @default(now())
+  Quote     Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id               String   @id @default(cuid())
+  quoteId          String   @unique
+  preferredDate    DateTime
+  preferredTime    String
+  status           String   @default("PENDING") // PENDING, CONFIRMED, COMPLETED, CANCELLED
+  confirmationSent Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  Quote            Quote    @relation(fields: [quoteId], references: [id])
+}
+
+model AdminNote {
+  id        String   @id @default(cuid())
+  quoteId   String
+  userId    String
+  note      String
+  createdAt DateTime @default(now())
+  Quote     Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id])
+}

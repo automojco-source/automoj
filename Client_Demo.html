@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUTO MOJ | Accident Repair Centre London</title>
+    <!-- Load Tailwind CSS via CDN for standalone HTML -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#080808',
+                        surface: '#0C0C0C',
+                        primary: '#C5A880',
+                        muted: '#8E8E8E',
+                        border: '#141414'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { 
+            background-color: #080808; 
+            color: #EDEDED; 
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+        }
+        h1, h2, h3, h4, h5, .font-serif {
+            font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080808; }
+        ::-webkit-scrollbar-thumb { background: #222222; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #C5A880; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased bg-[#080808] text-[#EDEDED]">
+
+    <!-- NAVIGATION (Exact Roma Performance Layout) -->
+    <header class="fixed top-0 w-full z-50 bg-[#080808]/95 backdrop-blur-md border-b border-[#1A1A1A]">
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-12 h-14 sm:h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 border border-[#C5A880]/40 rounded overflow-hidden flex items-center justify-center bg-[#0D0D0D] shadow-[0_0_12px_rgba(197,168,128,0.15)]">
+                    <img src="./public/images/site-icon-sm.png" alt="Auto Moj" class="w-full h-full object-cover">
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-serif tracking-[0.2em] sm:tracking-[0.25em] text-xs sm:text-sm text-[#EDEDED] font-semibold">AUTO MOJ ACCIDENT REPAIR</span>
+                    <span class="text-[7px] sm:text-[8px] tracking-[0.25em] sm:tracking-[0.3em] text-[#C5A880] uppercase -mt-0.5">Prestige Bodyshop • London</span>
+                </div>
+            </div>
+            
+            <nav class="hidden lg:flex gap-8 xl:gap-11 text-[11px] uppercase tracking-[0.25em] font-medium text-[#8E8E8E]">
+                <a href="#hero" class="text-[#EDEDED] hover:text-[#C5A880] transition-colors">Home</a>
+                <a href="#craft" class="hover:text-[#C5A880] transition-colors">Bodywork</a>
+                <a href="#craft" class="hover:text-[#C5A880] transition-colors">Paint & Bake</a>
+                <a href="#craft" class="hover:text-[#C5A880] transition-colors">PDR Dent</a>
+                <a href="#standards" class="hover:text-[#C5A880] transition-colors">About</a>
+                <a href="#contact" class="hover:text-[#C5A880] transition-colors">Contact</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <button onclick="alert('This opens the accident repair valuation quote form.')" class="border border-[#333333] hover:border-[#C5A880] text-[#C5A880] px-4 py-2 text-[10px] tracking-[0.25em] uppercase font-semibold transition-all duration-300">
+                    Quote &raquo;
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 1: HERO (1:1 with Roma) -->
+    <section id="hero" class="relative min-h-[92vh] sm:min-h-screen flex items-center justify-start overflow-hidden border-b border-[#141414]">
+        <div class="absolute inset-0 z-0">
+            <img src="/images/hero.jpg" alt="Auto Moj London Luxury Accident Repair" class="w-full h-full object-cover object-[70%_center] md:object-right filter brightness-[0.7] contrast-[1.15]" />
+            <div class="absolute inset-0 bg-gradient-to-r from-[#080808] via-[#080808]/90 md:via-[#080808]/80 to-transparent z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-black/60 z-10"></div>
+        </div>
+
+        <div class="max-w-[1400px] relative z-20 mx-auto px-6 sm:px-10 lg:px-12 w-full py-28">
+            <div class="max-w-xl space-y-6">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 border border-[#C5A880]/40 bg-[#111111]/90 text-[10px] tracking-[0.25em] uppercase text-[#C5A880] font-semibold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse"></span>
+                    <span>LONDON'S PREMIER ATELIER</span>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-serif tracking-[0.1em] text-[#EDEDED] uppercase leading-[1.05]">
+                    AUTO MOJ <br />
+                    ACCIDENT REPAIR, <br />
+                    BUILT IN <span class="text-[#C5A880]">LONDON.</span>
+                </h1>
+
+                <p class="text-xs sm:text-sm tracking-[0.25em] text-[#8E8E8E] uppercase font-light max-w-md leading-relaxed pt-1">
+                    LUXURY ACCIDENT REPAIR & PRECISION BODYWORK FOR MODERN LEGENDS.
+                </p>
+
+                <div class="pt-6">
+                    <button onclick="alert('This opens the assessment quote form.')" class="inline-flex items-center gap-2.5 border border-[#444444] hover:border-[#C5A880] text-[#EDEDED] hover:text-[#C5A880] px-6 py-3 text-[10px] tracking-[0.25em] uppercase font-medium transition-all duration-300">
+                        <span>EXPLORE ATELIER</span>
+                        <span class="text-xs text-[#C5A880]">&raquo;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: FEATURED COLLECTIONS (4-Card Grid) -->
+    <section id="craft" class="py-20 bg-[#080808] border-b border-[#141414]">
+        <div class="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-12">
+            <div class="mb-8 border-b border-[#141414] pb-3">
+                <span class="text-[11px] uppercase tracking-[0.3em] text-[#C5A880] font-serif font-medium">
+                    FEATURED COLLECTIONS
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <!-- Card 1 -->
+                <div class="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+                    <div class="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
+                        <img src="/images/door_restoration.jpg" alt="Dent & Scratch Repair" class="w-full h-full object-cover filter brightness-95" />
+                    </div>
+                    <h3 class="text-center font-serif text-xs tracking-[0.25em] uppercase text-[#EDEDED] mb-3 font-semibold">
+                        DENT & SCRATCH
+                    </h3>
+                    <div class="mt-auto pt-3 text-center border-t border-[#171717]">
+                        <span class="inline-flex items-center gap-1 text-[9px] tracking-[0.25em] uppercase text-[#777777] group-hover:text-[#C5A880] transition-colors">
+                            <span>VIEW SPEC</span>
+                            <span class="text-xs">&raquo;</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+                    <div class="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
+                        <img src="/images/artisan_hand_respray.jpg" alt="Oven Respray" class="w-full h-full object-cover filter brightness-95" />
+                    </div>
+                    <h3 class="text-center font-serif text-xs tracking-[0.25em] uppercase text-[#EDEDED] mb-3 font-semibold">
+                        OVEN RESPREY
+                    </h3>
+                    <div class="mt-auto pt-3 text-center border-t border-[#171717]">
+                        <span class="inline-flex items-center gap-1 text-[9px] tracking-[0.25em] uppercase text-[#777777] group-hover:text-[#C5A880] transition-colors">
+                            <span>VIEW SPEC</span>
+                            <span class="text-xs">&raquo;</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+                    <div class="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
+                        <img src="/images/pdr_light.jpg" alt="Precision PDR" class="w-full h-full object-cover filter brightness-95" />
+                    </div>
+                    <h3 class="text-center font-serif text-xs tracking-[0.25em] uppercase text-[#EDEDED] mb-3 font-semibold">
+                        PRECISION PDR
+                    </h3>
+                    <div class="mt-auto pt-3 text-center border-t border-[#171717]">
+                        <span class="inline-flex items-center gap-1 text-[9px] tracking-[0.25em] uppercase text-[#777777] group-hover:text-[#C5A880] transition-colors">
+                            <span>VIEW SPEC</span>
+                            <span class="text-xs">&raquo;</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+                    <div class="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
+                        <img src="/images/spray_gun.jpg" alt="Low-Bake Paint" class="w-full h-full object-cover filter brightness-95" />
+                    </div>
+                    <h3 class="text-center font-serif text-xs tracking-[0.25em] uppercase text-[#EDEDED] mb-3 font-semibold">
+                        LOW-BAKE PAINT
+                    </h3>
+                    <div class="mt-auto pt-3 text-center border-t border-[#171717]">
+                        <span class="inline-flex items-center gap-1 text-[9px] tracking-[0.25em] uppercase text-[#777777] group-hover:text-[#C5A880] transition-colors">
+                            <span>VIEW SPEC</span>
+                            <span class="text-xs">&raquo;</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: SPECIFICATION & CRAFT SHOWCASE -->
+    <section id="standards" class="py-24 bg-[#080808] border-b border-[#141414]">
+        <div class="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Specs List -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div>
+                        <h2 class="font-serif text-xl sm:text-2xl tracking-[0.2em] text-[#EDEDED] uppercase font-semibold">
+                            AUTO MOJ M10-FORGED
+                        </h2>
+                        <p class="text-[10px] tracking-[0.25em] uppercase text-[#888888] mt-0.5">
+                            HAND PANEL BEATING
+                        </p>
+                        <p class="text-sm font-serif text-[#C5A880] tracking-wider mt-2">
+                            &pound;950 / RESTORATION
+                        </p>
+                    </div>
+
+                    <div class="border-t border-[#171717] pt-6 space-y-3.5 text-[11px] tracking-wider font-light">
+                        <div class="flex items-center justify-between py-1 border-b border-[#121212]">
+                            <span class="text-[#666666] uppercase tracking-[0.2em]">TOLERANCE</span>
+                            <span class="text-[#EDEDED] font-mono">&plusmn; 0.5mm Contour Precision</span>
+                        </div>
+                        <div class="flex items-center justify-between py-1 border-b border-[#121212]">
+                            <span class="text-[#666666] uppercase tracking-[0.2em]">ALLOY TYPE</span>
+                            <span class="text-[#EDEDED] font-mono">Aerospace 6061-T6 & Steel</span>
+                        </div>
+                        <div class="flex items-center justify-between py-1 border-b border-[#121212]">
+                            <span class="text-[#666666] uppercase tracking-[0.2em]">MATERIAL</span>
+                            <span class="text-[#EDEDED] font-mono">Hand Formed Automotive Sheet</span>
+                        </div>
+                        <div class="flex items-center justify-between py-1 border-b border-[#121212]">
+                            <span class="text-[#666666] uppercase tracking-[0.2em]">FINISH</span>
+                            <span class="text-[#EDEDED] font-mono">Brushed Titanium / Gold Primer</span>
+                        </div>
+                        <div class="flex items-center justify-between py-1 border-b border-[#121212]">
+                            <span class="text-[#666666] uppercase tracking-[0.2em]">COATING</span>
+                            <span class="text-[#EDEDED] font-mono">Low-Bake Anti-Corrosion E-Coat</span>
+                        </div>
+                        <div class="flex items-center justify-between py-1 border-b border-[#121212]">
+                            <span class="text-[#666666] uppercase tracking-[0.2em]">WARRANTY</span>
+                            <span class="text-[#EDEDED] font-mono">Lifetime Structural Guarantee</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-3">
+                        <button onclick="alert('This opens the assessment quote form.')" class="inline-flex items-center gap-2 border border-[#333333] hover:border-[#C5A880] text-[#EDEDED] hover:text-[#C5A880] px-6 py-2.5 text-[10px] tracking-[0.25em] uppercase font-medium transition-all duration-300">
+                            <span>VIEW SERVICE</span>
+                            <span class="text-xs text-[#C5A880]">&raquo;</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Showcase Image -->
+                <div class="lg:col-span-7 flex justify-center lg:justify-end">
+                    <div class="w-full max-w-lg border border-[#1C1C1C] bg-[#0C0C0C] p-3 sm:p-4">
+                        <img src="/images/metal_shaping.jpg" alt="Hand Metal Shaping" class="w-full aspect-square object-cover filter contrast-105" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: CARBON SPLITTER & CRAFTSMANSHIP -->
+    <section id="restorations" class="py-24 bg-[#080808] border-b border-[#141414]">
+        <div class="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-6">
+                    <div class="border border-[#1C1C1C] bg-[#0C0C0C] p-3 sm:p-4">
+                        <img src="/images/carbon.jpg" alt="Carbon Splitter Repair" class="w-full aspect-[16/10] object-cover" />
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 space-y-6">
+                    <h2 class="font-serif text-xl sm:text-2xl tracking-[0.2em] text-[#EDEDED] uppercase font-semibold">
+                        PRECISION. STRENGTH. STYLE.
+                    </h2>
+
+                    <p class="text-xs text-[#8E8E8E] leading-relaxed font-light tracking-wide max-w-lg">
+                        Every component we restore is a fusion of advanced engineering and timeless design. Crafted with aerospace-grade composites and finished to showroom perfection in our London atelier.
+                    </p>
+                    
+                    <div class="pt-2">
+                        <button onclick="alert('This opens the assessment quote form.')" class="inline-flex items-center gap-2 border border-[#333333] hover:border-[#C5A880] text-[#EDEDED] hover:text-[#C5A880] px-6 py-2.5 text-[10px] tracking-[0.25em] uppercase font-medium transition-all duration-300">
+                            <span>DISCOVER BODYWORK</span>
+                            <span class="text-xs text-[#C5A880]">&raquo;</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER (Exact 1:1 with Roma) -->
+    <footer id="contact" class="bg-[#050505] text-[#8E8E8E] border-t border-[#1C1C1C] pt-16 pb-12 font-sans">
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-12 pb-16 border-b border-[#141414]">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
+                <div>
+                    <h5 class="text-[10px] uppercase tracking-[0.25em] text-[#EDEDED] font-semibold">PREMIUM QUALITY</h5>
+                    <p class="text-[9px] text-[#666666] tracking-wider uppercase mt-0.5">OEM CERTIFIED MATERIALS</p>
+                </div>
+                <div>
+                    <h5 class="text-[10px] uppercase tracking-[0.25em] text-[#EDEDED] font-semibold">PRECISION</h5>
+                    <p class="text-[9px] text-[#666666] tracking-wider uppercase mt-0.5">LASER MEASURED</p>
+                </div>
+                <div>
+                    <h5 class="text-[10px] uppercase tracking-[0.25em] text-[#EDEDED] font-semibold">INSURANCE CLAIMS</h5>
+                    <p class="text-[9px] text-[#666666] tracking-wider uppercase mt-0.5">DIRECT UK LIAISON</p>
+                </div>
+                <div>
+                    <h5 class="text-[10px] uppercase tracking-[0.25em] text-[#EDEDED] font-semibold">RESTORED IN</h5>
+                    <p class="text-[9px] text-[#666666] tracking-wider uppercase mt-0.5">LONDON ATELIER</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-12 pt-8 flex flex-col sm:flex-row justify-between items-center text-[9px] tracking-[0.25em] text-[#555555]">
+            <p>&copy; 2026 AUTO MOJ ACCIDENT REPAIR. ALL RIGHTS RESERVED.</p>
+            <div class="flex gap-8 mt-4 sm:mt-0 uppercase">
+                <a href="#" class="hover:text-[#C5A880]">PRIVACY POLICY</a>
+                <a href="#" class="hover:text-[#C5A880]">TERMS & CONDITIONS</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

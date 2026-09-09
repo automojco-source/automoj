@@ -1,0 +1,144 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  /* Ultra-Luxury Dark Mode inspired by Roma Performance */
+  color-scheme: dark;
+  --background: #080808;
+  --foreground: #EDEDED;
+  --card: #111111;
+  --card-foreground: #EDEDED;
+  --popover: #111111;
+  --popover-foreground: #EDEDED;
+  --primary: #C5A880; /* Antique Bronze Gold */
+  --primary-foreground: #080808;
+  --secondary: #171717;
+  --secondary-foreground: #EDEDED;
+  --muted: #111111;
+  --muted-foreground: #8E8E8E;
+  --accent: #C5A880;
+  --accent-foreground: #080808;
+  --destructive: #EF4444;
+  --border: #222222;
+  --input: #222222;
+  --ring: #C5A880;
+  --radius: 0.125rem; /* Sleek, sharp architectural luxury corners */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Cinematic Hero Text Motion: Slow, Ultra-Smooth Right-to-Left Slide & Fade */
+@keyframes heroSlideFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(75px);
+    filter: blur(12px);
+  }
+  40% {
+    opacity: 0.45;
+    filter: blur(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes heroAmbientFloat {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes heroGoldGleam {
+  0%, 100% {
+    opacity: 0.85;
+    text-shadow: 0 0 15px rgba(197, 168, 128, 0.2);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 28px rgba(197, 168, 128, 0.6), 0 0 45px rgba(197, 168, 128, 0.3);
+  }
+}
+
+/* Sequential Staggered Entrance Classes (Slow Cinematic Flow: 2.2s Duration) */
+.hero-seq-1 {
+  animation: heroSlideFromRight 2.2s cubic-bezier(0.12, 1, 0.2, 1) 0.2s both;
+}
+
+.hero-seq-2 {
+  animation: heroSlideFromRight 2.2s cubic-bezier(0.12, 1, 0.2, 1) 0.8s both;
+}
+
+.hero-seq-3 {
+  animation: heroSlideFromRight 2.2s cubic-bezier(0.12, 1, 0.2, 1) 1.9s both;
+}
+
+.hero-seq-4 {
+  animation: heroSlideFromRight 2.2s cubic-bezier(0.12, 1, 0.2, 1) 3.0s both;
+}
+
+.hero-seq-5 {
+  animation: heroSlideFromRight 2.0s cubic-bezier(0.12, 1, 0.2, 1) 4.1s both;
+}
+
+.hero-seq-6 {
+  animation: heroSlideFromRight 2.0s cubic-bezier(0.12, 1, 0.2, 1) 5.0s both;
+}
+
+.hero-breathing-float {
+  animation: heroAmbientFloat 8s ease-in-out 5.8s infinite;
+}
+
+.hero-gold-glow {
+  animation: heroGoldGleam 4s ease-in-out infinite;
+}

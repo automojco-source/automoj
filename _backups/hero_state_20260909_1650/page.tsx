@@ -1,0 +1,330 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+
+export default function HomePage() {
+  const { t, lang } = useLanguage();
+  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const { clientX, clientY, currentTarget } = e;
+    const { width, height, left, top } = currentTarget.getBoundingClientRect();
+    const x = ((clientX - left) / width - 0.5) * 14; // Smooth, subtle parallax motion
+    const y = ((clientY - top) / height - 0.5) * 14;
+    setMouseOffset({ x, y });
+  };
+
+  const handleMouseLeave = () => {
+    setMouseOffset({ x: 0, y: 0 });
+  };
+
+  return (
+    <main className="min-h-screen bg-[#080808] text-[#EDEDED] overflow-x-hidden font-sans">
+      
+      {/* SECTION 1: HERO HEADER (Luxury Video Background with Responsive Optimization) */}
+      <section 
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="relative min-h-[92vh] sm:min-h-screen flex items-start justify-start overflow-hidden border-b border-[#141414]"
+      >
+        {/* Background Video: Responsive, Mobile-First Optimized with Instant Poster Fallback */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            preload="auto"
+            poster="/images/hero-poster.jpg"
+            aria-hidden="true"
+            className="w-full h-full object-cover object-[36%_center] sm:object-[45%_center] md:object-[58%_center] xl:object-center"
+          >
+            {/* Mobile-optimized 720p version for screens <= 768px for lightning-fast mobile load */}
+            <source src="/hero-video-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
+            {/* Modern high-efficiency WebM for Chrome/Edge/Firefox */}
+            <source src="/hero-video.webm" type="video/webm" />
+            {/* Standard full-HD 1080p MP4 for Desktop Safari & all other browsers */}
+            <source src="/hero-video.mp4" type="video/mp4" />
+            {/* Fallback image if video autoplay is restricted */}
+            <img 
+              src="/images/hero-poster.jpg" 
+              alt="Auto Moj London Luxury Accident Repair" 
+              className="w-full h-full object-cover object-[36%_center] sm:object-[45%_center] md:object-[58%_center] xl:object-center"
+            />
+          </video>
+          {/* Mobile: Top & bottom vignette leaving car door 100% visible in the middle. Desktop: Left-dark to right-transparent */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080808]/95 via-transparent via-45% to-[#080808]/80 md:bg-gradient-to-r md:from-[#080808] md:via-[#080808]/75 md:via-35% md:to-transparent md:to-65% z-10 pointer-events-none" />
+        </div>
+
+        {/* Hero Content shifted ~35% towards top to perfectly reveal the car and door restoration */}
+        <div className="max-w-[1400px] relative z-20 mx-auto px-6 sm:px-10 lg:px-12 w-full pt-20 sm:pt-24 lg:pt-28 pb-16">
+          <div 
+            style={{
+              transform: `translate3d(${mouseOffset.x}px, ${mouseOffset.y}px, 0)`,
+              transition: "transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)"
+            }}
+            className="max-w-xl space-y-6 hero-breathing-float will-change-transform"
+          >
+            <div className="hero-seq-1 inline-flex items-center gap-2 px-3.5 py-1.5 border border-[#C5A880]/40 bg-[#111111]/90 text-[10px] sm:text-[11px] tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[#C5A880] font-semibold backdrop-blur-sm shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse"></span>
+              <span>AUTO MOJ ACCIDENT REPAIR</span>
+            </div>
+
+            <h1 className="font-serif tracking-[0.1em] text-[#EDEDED] uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] space-y-1.5 sm:space-y-2.5">
+              {/* Line 1: AUTO MOJ - 100% Size (Enters First) */}
+              <span className="hero-seq-2 block text-4xl sm:text-6xl lg:text-7xl leading-[1.05]">
+                {t("hero.title1")}
+              </span>
+              
+              {/* Line 2: ACCIDENT REPAIR - In 2 Lines & 20% Smaller (Enters Second) */}
+              <span className="hero-seq-3 block text-2xl sm:text-4xl lg:text-[2.85rem] leading-[1.1] text-[#D8D8D8]">
+                <span className="block">{t("hero.title2.line1")}</span>
+                <span className="block">{t("hero.title2.line2")}</span>
+              </span>
+              
+              {/* Line 3: BUILT IN LONDON - Scaled Down 20% (Enters Third) */}
+              <span className="hero-seq-4 block text-lg sm:text-2xl lg:text-[2.15rem] leading-[1.15] text-[#B0B0B0]">
+                {t("hero.title3")} <span className="text-[#C5A880] hero-gold-glow inline-block">{t("hero.city")}</span>
+              </span>
+            </h1>
+
+            <p className="hero-seq-5 text-xs sm:text-sm tracking-[0.2em] text-[#8E8E8E] uppercase font-light max-w-md leading-relaxed pt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+              {t("hero.desc")}
+            </p>
+
+            <div className="hero-seq-6 pt-6">
+              <Link 
+                href="/get-a-quote" 
+                className="inline-flex items-center gap-2.5 border border-[#444444] hover:border-[#C5A880] text-[#EDEDED] hover:text-[#C5A880] px-6 py-3 text-[10px] tracking-[0.25em] uppercase font-medium transition-all duration-300 group bg-[#080808]/40 backdrop-blur-sm hover:shadow-[0_0_25px_rgba(197,168,128,0.3)]"
+              >
+                <span>{t("hero.cta")}</span>
+                <span className="text-xs text-[#C5A880] transition-transform group-hover:translate-x-1">&raquo;</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2: FEATURED DISCIPLINES (Exact 4-Card Grid with Header & View Spec Links) */}
+      <section id="craft" className="py-20 bg-[#080808] border-b border-[#141414]">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-12">
+          {/* Header */}
+          <div className="mb-8 border-b border-[#141414] pb-3">
+            <span className="text-[11px] uppercase tracking-[0.3em] text-[#C5A880] font-serif font-medium">
+              {t("featured.title")}
+            </span>
+          </div>
+
+          {/* 4 Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            
+            {/* Card 1: SCRATCH & DENT REPAIR */}
+            <div className="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+              <div className="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
+                <img 
+                  src="/images/door_restoration.jpg" 
+                  alt="Auto Moj Scratch & Dent Repair" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter brightness-95"
+                />
+              </div>
+              <h3 className="text-center font-serif text-xs tracking-[0.2em] uppercase text-[#EDEDED] mb-3 font-semibold">
+                {t("card1.title")}
+              </h3>
+              <div className="mt-auto pt-3 text-center border-t border-[#171717]">
+                <Link href="/services/accident-repair" className="inline-flex items-center gap-1 text-[9px] tracking-[0.25em] uppercase text-[#777777] group-hover:text-[#C5A880] transition-colors">
+                  <span>{t("card1.link")}</span>
+                  <span className="text-xs">&raquo;</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Card 2: RESPREY */}
+            <div className="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+              <div className="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
+                <img 
+                  src="/images/artisan_hand_respray.jpg" 
+                  alt="Auto Moj Paint Artisan & Refinishing" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter brightness-95"
+                />
+              </div>
+              <h3 className="text-center font-serif text-xs tracking-[0.2em] uppercase text-[#EDEDED] mb-3 font-semibold">
+                {t("card2.title")}
+              </h3>
+              <div className="mt-auto pt-3 text-center border-t border-[#171717]">
+                <Link href="/services/car-paint" className="inline-flex items-center gap-1 text-[9px] tracking-[0.25em] uppercase text-[#777777] group-hover:text-[#C5A880] transition-colors">
+                  <span>{t("card2.link")}</span>
+                  <span className="text-xs">&raquo;</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Card 3: PRECISION PDR REFLECTION */}
+            <div className="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+              <div className="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
+                <img 
+                  src="/images/pdr_light.jpg" 
+                  alt="Auto Moj Precision PDR" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter brightness-95"
+                />
+              </div>
+              <h3 className="text-center font-serif text-xs tracking-[0.2em] uppercase text-[#EDEDED] mb-3 font-semibold">
+                {t("card3.title")}
+              </h3>
+              <div className="mt-auto pt-3 text-center border-t border-[#171717]">
+                <Link href="/services/dent-repair" className="inline-flex items-center gap-1 text-[9px] tracking-[0.25em] uppercase text-[#777777] group-hover:text-[#C5A880] transition-colors">
+                  <span>{t("card3.link")}</span>
+                  <span className="text-xs">&raquo;</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Card 4: LOW-BAKE SPRAY PAINT */}
+            <div className="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+              <div className="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
+                <img 
+                  src="/images/spray_gun.jpg" 
+                  alt="Auto Moj Low-Bake Oven Refinish" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter brightness-95"
+                />
+              </div>
+              <h3 className="text-center font-serif text-xs tracking-[0.2em] uppercase text-[#EDEDED] mb-3 font-semibold">
+                {t("card4.title")}
+              </h3>
+              <div className="mt-auto pt-3 text-center border-t border-[#171717]">
+                <Link href="/services/car-paint" className="inline-flex items-center gap-1 text-[9px] tracking-[0.25em] uppercase text-[#777777] group-hover:text-[#C5A880] transition-colors">
+                  <span>{t("card4.link")}</span>
+                  <span className="text-xs">&raquo;</span>
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: MONOBLOCK / TECHNICAL CRAFT SHOWCASE (Exact 1:1 of Roma R10 Monoblock with Left Specs & Right Circular/Square Feature) */}
+      <section id="standards" className="py-24 bg-[#080808] border-b border-[#141414]">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Specs List */}
+            <div className="lg:col-span-5 space-y-6">
+              <div>
+                <h2 className="font-serif text-xl sm:text-2xl tracking-[0.15em] text-[#EDEDED] uppercase font-semibold">
+                  {t("spec.title")}
+                </h2>
+                <p className="text-[10px] tracking-[0.2em] uppercase text-[#888888] mt-0.5">
+                  {t("spec.badge")}
+                </p>
+                <p className="text-sm font-serif text-[#C5A880] tracking-wider mt-2">
+                  {t("spec.price")}
+                </p>
+              </div>
+
+              {/* Technical Spec List with Icons & Exact Alignment */}
+              <div className="border-t border-[#171717] pt-6 space-y-3.5 text-[11px] tracking-wider font-light">
+                <div className="flex items-center justify-between py-1 border-b border-[#121212]">
+                  <span className="text-[#666666] uppercase tracking-[0.15em]">{t("spec.row1.label")}</span>
+                  <span className="text-[#EDEDED] font-mono">{t("spec.row1.value")}</span>
+                </div>
+                <div className="flex items-center justify-between py-1 border-b border-[#121212]">
+                  <span className="text-[#666666] uppercase tracking-[0.15em]">{t("spec.row2.label")}</span>
+                  <span className="text-[#EDEDED] font-mono">{t("spec.row2.value")}</span>
+                </div>
+                <div className="flex items-center justify-between py-1 border-b border-[#121212]">
+                  <span className="text-[#666666] uppercase tracking-[0.15em]">{t("spec.row3.label")}</span>
+                  <span className="text-[#EDEDED] font-mono">{t("spec.row3.value")}</span>
+                </div>
+                <div className="flex items-center justify-between py-1 border-b border-[#121212]">
+                  <span className="text-[#666666] uppercase tracking-[0.15em]">{t("spec.row4.label")}</span>
+                  <span className="text-[#EDEDED] font-mono">{t("spec.row4.value")}</span>
+                </div>
+                <div className="flex items-center justify-between py-1 border-b border-[#121212]">
+                  <span className="text-[#666666] uppercase tracking-[0.15em]">{t("spec.row5.label")}</span>
+                  <span className="text-[#EDEDED] font-mono">{t("spec.row5.value")}</span>
+                </div>
+                <div className="flex items-center justify-between py-1 border-b border-[#121212]">
+                  <span className="text-[#666666] uppercase tracking-[0.15em]">{t("spec.row6.label")}</span>
+                  <span className="text-[#EDEDED] font-mono">{t("spec.row6.value")}</span>
+                </div>
+              </div>
+
+              <div className="pt-3">
+                <Link 
+                  href="/get-a-quote" 
+                  className="inline-flex items-center gap-2 border border-[#333333] hover:border-[#C5A880] text-[#EDEDED] hover:text-[#C5A880] px-6 py-2.5 text-[10px] tracking-[0.25em] uppercase font-medium transition-all duration-300"
+                >
+                  <span>{t("spec.cta")}</span>
+                  <span className="text-xs text-[#C5A880]">&raquo;</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Showcase Image */}
+            <div className="lg:col-span-7 flex justify-center lg:justify-end">
+              <div className="w-full max-w-lg border border-[#1C1C1C] bg-[#0C0C0C] p-3 sm:p-4">
+                <img 
+                  src="/images/metal_shaping.jpg" 
+                  alt="Auto Moj Traditional Metal Shaping" 
+                  className="w-full aspect-square object-cover filter contrast-105"
+                />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: CARBON AERO / PHILOSOPHY */}
+      <section id="restorations" className="py-24 bg-[#080808] border-b border-[#141414]">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Image */}
+            <div className="lg:col-span-6">
+              <div className="border border-[#1C1C1C] bg-[#0C0C0C] p-3 sm:p-4">
+                <img 
+                  src="/images/carbon.jpg" 
+                  alt="Auto Moj Carbon Composite & Bumper Repair" 
+                  className="w-full aspect-[16/10] object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Right Text with AM Watermark */}
+            <div className="lg:col-span-6 space-y-6 relative">
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none select-none">
+                <span className="text-[120px] font-serif font-bold text-[#C5A880]">AM</span>
+              </div>
+
+              <div>
+                <h2 className="font-serif text-xl sm:text-2xl tracking-[0.15em] text-[#EDEDED] uppercase font-semibold">
+                  {t("phil.title")}
+                </h2>
+              </div>
+
+              <p className="text-xs text-[#8E8E8E] leading-relaxed font-light tracking-wide max-w-lg">
+                {t("phil.desc")}
+              </p>
+              
+              <div className="pt-2">
+                <Link 
+                  href="/services/accident-repair" 
+                  className="inline-flex items-center gap-2 border border-[#333333] hover:border-[#C5A880] text-[#EDEDED] hover:text-[#C5A880] px-6 py-2.5 text-[10px] tracking-[0.25em] uppercase font-medium transition-all duration-300"
+                >
+                  <span>{t("phil.cta")}</span>
+                  <span className="text-xs text-[#C5A880]">&raquo;</span>
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+  );
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body,html{margin:0;padding:0;background:#080808;display:flex;align-items:center;justify-content:center;width:1050px;height:600px;overflow:hidden;}</style></head><body><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 600" width="1050" height="600">
+  <defs>
+    <linearGradient id="cardGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF5DF"/>
+      <stop offset="25%" stop-color="#E5D1AF"/>
+      <stop offset="55%" stop-color="#C5A880"/>
+      <stop offset="85%" stop-color="#7B5C30"/>
+      <stop offset="100%" stop-color="#DEC6A2"/>
+    </linearGradient>
+    <radialGradient id="cardBg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#070707"/>
+    </radialGradient>
+    <pattern id="carbonDot" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#1A1A1A"/>
+      <circle cx="12" cy="12" r="1" fill="#161616"/>
+    </pattern>
+    <filter id="cardGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity="0.9"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1050" height="600" rx="16" fill="url(#cardBg)"/>
+  <rect width="1050" height="600" rx="16" fill="url(#carbonDot)" opacity="0.6"/>
+
+  <!-- Border & Corner Hairlines -->
+  <rect x="25" y="25" width="1000" height="550" rx="10" fill="none" stroke="url(#cardGold)" stroke-width="1.2" opacity="0.4"/>
+  <rect x="35" y="35" width="980" height="530" rx="8" fill="none" stroke="#222222" stroke-width="0.8"/>
+
+  <!-- Center Logo & Branding -->
+  <g transform="translate(525, 240)" filter="url(#cardGlow)">
+    <polygon points="0,-95 78,-48 78,48 0,95 -78,48 -78,-48" fill="#090909" stroke="url(#cardGold)" stroke-width="2.2"/>
+    <polygon points="0,-85 70,-42 70,42 0,85 -70,42 -70,-42" fill="none" stroke="url(#cardGold)" stroke-width="0.6" stroke-dasharray="2 3" opacity="0.5"/>
+    <circle cx="0" cy="-95" r="2.5" fill="#FFF5DF"/>
+    <circle cx="78" cy="-48" r="2.5" fill="#FFF5DF"/>
+    <circle cx="78" cy="48" r="2.5" fill="#FFF5DF"/>
+    <circle cx="0" cy="95" r="2.5" fill="#FFF5DF"/>
+    <circle cx="-78" cy="48" r="2.5" fill="#FFF5DF"/>
+    <circle cx="-78" cy="-48" r="2.5" fill="#FFF5DF"/>
+    <!-- Interlocking AM -->
+    <path d="M-34,44 L0,-50 L34,44 L18,44 L10,22 L-10,22 L-18,44 Z" fill="none" stroke="url(#cardGold)" stroke-width="3.8"/>
+    <path d="M-48,28 L-48,-16 L0,28 L48,-16 L48,28" fill="none" stroke="url(#cardGold)" stroke-width="3.2" stroke-linecap="square"/>
+    <polygon points="0,-6 6,2 0,10 -6,2" fill="url(#cardGold)"/>
+  </g>
+
+  <!-- Typography -->
+  <text x="525" y="415" text-anchor="middle" fill="#EDEDED" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="bold" letter-spacing="12">AUTO MOJ</text>
+  
+  <line x1="380" y1="440" x2="490" y2="440" stroke="url(#cardGold)" stroke-width="1" opacity="0.6"/>
+  <polygon points="525,437 529,440 525,443 521,440" fill="url(#cardGold)"/>
+  <line x1="560" y1="440" x2="670" y2="440" stroke="url(#cardGold)" stroke-width="1" opacity="0.6"/>
+
+  <text x="525" y="475" text-anchor="middle" fill="#C5A880" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="bold" letter-spacing="7">ACCIDENT REPAIR ATELIER</text>
+  <text x="525" y="505" text-anchor="middle" fill="#777777" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="500" letter-spacing="5">PRESTIGE BODYSHOP • LONDON</text>
+</svg></body></html>
