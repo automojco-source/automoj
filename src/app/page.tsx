@@ -9,9 +9,14 @@ export default function HomePage() {
   const { t, lang } = useLanguage();
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const heroTrackRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imagesRef = useRef<HTMLImageElement[]>([]);
+  const isLoadedRef = useRef<boolean>(false);
+  const targetProgressRef = useRef<number>(0);
+  const currentProgressRef = useRef<number>(0);
+
+  const TOTAL_FRAMES = 61;
 
   // Helper to map scrollProgress into a specific phase [0, 1]
   const getSubProgress = (prog: number, start: number, end: number) => {
@@ -20,14 +25,64 @@ export default function HomePage() {
     return (prog - start) / (end - start);
   };
 
+  // Helper to draw a frame onto canvas with responsive aspect-cover
+  const drawFrame = (img: HTMLImageElement, canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext("2d");
+    if (!ctx || !img.complete || img.naturalWidth === 0) return;
+
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const iw = img.naturalWidth;
+    const ih = img.naturalHeight;
+
+    // Aspect cover scaling
+    const scale = Math.max(cw / iw, ch / ih);
+    const sw = iw * scale;
+    const sh = ih * scale;
+
+    // Mobile focal point centered on car door (36%), Desktop centered (50%)
+    const focalX = window.innerWidth <= 768 ? 0.36 : 0.50;
+    const dx = (cw - sw) * focalX;
+    const dy = (ch - sh) * 0.5;
+
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(img, dx, dy, sw, sh);
+  };
+
   useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      video.pause();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // Set high-DPI canvas resolution
+    const updateCanvasSize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      const firstImg = imagesRef.current[0];
+      if (firstImg && firstImg.complete) {
+        drawFrame(firstImg, canvas);
+      }
+    };
+    updateCanvasSize();
+    window.addEventListener("resize", updateCanvasSize);
+
+    // Preload frames progressively (Frame 1 immediately, then remainder asynchronously)
+    const images: HTMLImageElement[] = [];
+    imagesRef.current = images;
+
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      const img = new Image();
+      const numStr = String(i).padStart(3, "0");
+      img.src = `/frames/f_${numStr}.webp`;
+      if (i === 1) {
+        img.onload = () => {
+          isLoadedRef.current = true;
+          drawFrame(img, canvas);
+        };
+      }
+      images.push(img);
     }
 
-    let targetTime = 0;
-    let currentTime = 0;
     let rafId: number;
 
     const handleScroll = () => {
@@ -38,29 +93,37 @@ export default function HomePage() {
       if (totalScrollable <= 0) return;
 
       const progress = Math.min(Math.max((topOffset - rect.top) / totalScrollable, 0), 1);
+      targetProgressRef.current = progress;
       setScrollProgress(progress);
-
-      if (!isPlaying && video && video.duration && !isNaN(video.duration)) {
-        targetTime = progress * video.duration;
-      }
     };
 
-    const updateFrame = () => {
-      if (!isPlaying && video && video.duration && !isNaN(video.duration)) {
-        const diff = targetTime - currentTime;
-        if (Math.abs(diff) > 0.003) {
-          currentTime += diff * 0.28;
-          video.currentTime = currentTime;
-        }
+    // Silky-smooth 60fps interpolation loop (0.12 lerp factor eliminates all jitter)
+    const renderLoop = () => {
+      const diff = targetProgressRef.current - currentProgressRef.current;
+      if (Math.abs(diff) > 0.0005) {
+        currentProgressRef.current += diff * 0.14;
+      } else {
+        currentProgressRef.current = targetProgressRef.current;
       }
-      rafId = requestAnimationFrame(updateFrame);
+
+      const frameIdx = Math.min(
+        TOTAL_FRAMES - 1,
+        Math.max(0, Math.round(currentProgressRef.current * (TOTAL_FRAMES - 1)))
+      );
+
+      const currentImg = imagesRef.current[frameIdx];
+      if (currentImg && currentImg.complete && canvas) {
+        drawFrame(currentImg, canvas);
+      }
+
+      rafId = requestAnimationFrame(renderLoop);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    rafId = requestAnimationFrame(updateFrame);
+    rafId = requestAnimationFrame(renderLoop);
     handleScroll();
 
-    // IntersectionObserver for scroll-driven reveals of lower cards and sections
+    // IntersectionObserver for scroll-driven reveals of lower cards
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -78,22 +141,11 @@ export default function HomePage() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", updateCanvasSize);
       cancelAnimationFrame(rafId);
       observer.disconnect();
     };
-  }, [isPlaying]);
-
-  const togglePlayMode = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (isPlaying) {
-      video.pause();
-      setIsPlaying(false);
-    } else {
-      video.play();
-      setIsPlaying(true);
-    }
-  };
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const { clientX, clientY, currentTarget } = e;
@@ -117,44 +169,28 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#080808] text-[#EDEDED] font-sans">
       
-      {/* SECTION 1: SCROLL-DRIVEN HERO TRACK (Interactive Scrollytelling) */}
+      {/* SECTION 1: SCROLL-DRIVEN HERO TRACK (Ultra-Smooth 60FPS Canvas Scrollytelling) */}
       <section 
         ref={heroTrackRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         className="relative min-h-[300vh] sm:min-h-[320vh] border-b border-[#141414]"
       >
-        {/* Pinned Viewport Container: Locked in place during 300vh scroll */}
+        {/* Pinned Viewport Container: Locked in place during scroll */}
         <div className="sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] w-full overflow-hidden flex items-start justify-start">
 
-          {/* Video Layer with Scroll Parallax & Zoom */}
+          {/* Canvas Frame Layer with Hardware-Accelerated 60FPS Renderer */}
           <div 
             style={{
-              transform: `scale(${1 + scrollProgress * 0.08})`,
+              transform: `scale(${1 + scrollProgress * 0.06})`,
               willChange: "transform"
             }}
             className="absolute inset-0 z-0 overflow-hidden"
           >
-            <video 
-              ref={videoRef}
-              muted 
-              playsInline 
-              preload="auto"
-              poster="/images/hero-poster.jpg?v=20260909_3"
-              aria-hidden="true"
-              className="w-full h-full object-cover object-[36%_center] sm:object-[45%_center] md:object-[58%_center] xl:object-center"
-            >
-              {/* Ultra-fast scrub-optimized MP4 with frequent keyframes (every 5 frames) */}
-              <source src="/hero-video-scroll-mobile.mp4?v=20260909_3" type="video/mp4" media="(max-width: 768px)" />
-              <source src="/hero-video-scroll.mp4?v=20260909_3" type="video/mp4" />
-              <source src="/hero-video.mp4?v=20260909_3" type="video/mp4" />
-              {/* Fallback image */}
-              <img 
-                src="/images/hero-poster.jpg?v=20260909_3" 
-                alt="Auto Moj London Luxury Accident Repair" 
-                className="w-full h-full object-cover object-[36%_center] sm:object-[45%_center] md:object-[58%_center] xl:object-center"
-              />
-            </video>
+            <canvas 
+              ref={canvasRef}
+              className="w-full h-full object-cover"
+            />
 
             {/* Subtle Atelier Vignette Overlay: Car Door Remains 100% Crisp */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#080808]/95 via-transparent via-45% to-[#080808]/80 md:bg-gradient-to-r md:from-[#080808] md:via-[#080808]/75 md:via-35% md:to-transparent md:to-65% z-10 pointer-events-none" />
@@ -258,18 +294,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Interactive Mode Toggle (Scroll-Driven vs Continuous AutoPlay) */}
-          <div className="absolute bottom-6 right-6 sm:right-10 z-30 flex items-center gap-3">
-            <button 
-              onClick={togglePlayMode}
-              className="flex items-center gap-2 px-3 py-1.5 bg-[#111111]/80 hover:bg-[#1A1A1A] border border-[#333333] hover:border-[#C5A880] text-[10px] tracking-[0.2em] text-[#C5A880] uppercase rounded transition-all backdrop-blur-md shadow-lg"
-              title={isPlaying ? "Switch to Scroll Control" : "Switch to Auto Play"}
-            >
-              <span>{isPlaying ? "⏸" : "▶"}</span>
-              <span className="hidden sm:inline">{isPlaying ? (lang === "fa" ? "حالت اسکرول" : "SCROLL MODE") : (lang === "fa" ? "پخش خودکار" : "AUTO PLAY")}</span>
-            </button>
-          </div>
-
           {/* Elegant Luxury Scroll Guidance Indicator */}
           <div 
             style={{ 
@@ -279,7 +303,7 @@ export default function HomePage() {
             className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 transition-opacity duration-300 text-center"
           >
             <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#C5A880] font-serif font-light">
-              {lang === "fa" ? "برای هدایت ویدیو اسکرول کنید ↓" : "SCROLL TO DISCOVER CRAFT ↓"}
+              {lang === "fa" ? "برای هدایت انیمیشن اسکرول کنید ↓" : "SCROLL TO DISCOVER CRAFT ↓"}
             </span>
             <div className="w-[1px] h-6 bg-gradient-to-b from-[#C5A880] to-transparent animate-pulse" />
           </div>
