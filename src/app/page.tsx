@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -8,11 +8,96 @@ import { useLanguage } from "@/context/LanguageContext";
 export default function HomePage() {
   const { t, lang } = useLanguage();
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const heroTrackRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Helper to map scrollProgress into a specific phase [0, 1]
+  const getSubProgress = (prog: number, start: number, end: number) => {
+    if (prog <= start) return 0;
+    if (prog >= end) return 1;
+    return (prog - start) / (end - start);
+  };
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.pause();
+    }
+
+    let targetTime = 0;
+    let currentTime = 0;
+    let rafId: number;
+
+    const handleScroll = () => {
+      if (!heroTrackRef.current) return;
+      const rect = heroTrackRef.current.getBoundingClientRect();
+      const totalScrollable = rect.height - window.innerHeight;
+      if (totalScrollable <= 0) return;
+
+      const progress = Math.min(Math.max(-rect.top / totalScrollable, 0), 1);
+      setScrollProgress(progress);
+
+      if (!isPlaying && video && video.duration && !isNaN(video.duration)) {
+        targetTime = progress * video.duration;
+      }
+    };
+
+    const updateFrame = () => {
+      if (!isPlaying && video && video.duration && !isNaN(video.duration)) {
+        const diff = targetTime - currentTime;
+        if (Math.abs(diff) > 0.003) {
+          currentTime += diff * 0.28;
+          video.currentTime = currentTime;
+        }
+      }
+      rafId = requestAnimationFrame(updateFrame);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    rafId = requestAnimationFrame(updateFrame);
+    handleScroll();
+
+    // IntersectionObserver for scroll-driven reveals of lower cards and sections
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    document.querySelectorAll(".scroll-reveal, .scroll-reveal-left, .scroll-reveal-right").forEach((el) => {
+      observer.observe(el);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
+  }, [isPlaying]);
+
+  const togglePlayMode = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (isPlaying) {
+      video.pause();
+      setIsPlaying(false);
+    } else {
+      video.play();
+      setIsPlaying(true);
+    }
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const { clientX, clientY, currentTarget } = e;
     const { width, height, left, top } = currentTarget.getBoundingClientRect();
-    const x = ((clientX - left) / width - 0.5) * 14; // Smooth, subtle parallax motion
+    const x = ((clientX - left) / width - 0.5) * 14;
     const y = ((clientY - top) / height - 0.5) * 14;
     setMouseOffset({ x, y });
   };
@@ -21,90 +106,183 @@ export default function HomePage() {
     setMouseOffset({ x: 0, y: 0 });
   };
 
+  // Scroll phase calculations
+  const subLine1 = Math.min(1, scrollProgress * 5); // Visible early
+  const subLine2 = getSubProgress(scrollProgress, 0.15, 0.48); // Line 2 enters 15% -> 48%
+  const subLine3 = getSubProgress(scrollProgress, 0.45, 0.78); // Line 3 enters 45% -> 78%
+  const subDesc = getSubProgress(scrollProgress, 0.70, 0.95);  // CTA & desc enter 70% -> 95%
+  const scrollIndicatorOpacity = Math.max(0, 1 - scrollProgress * 4.5);
+
   return (
     <main className="min-h-screen bg-[#080808] text-[#EDEDED] overflow-x-hidden font-sans">
       
-      {/* SECTION 1: HERO HEADER (Luxury Video Background with Responsive Optimization) */}
+      {/* SECTION 1: SCROLL-DRIVEN HERO TRACK (Interactive Scrollytelling) */}
       <section 
+        ref={heroTrackRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative min-h-[92vh] sm:min-h-screen flex items-start justify-start overflow-hidden border-b border-[#141414]"
+        className="relative min-h-[250vh] sm:min-h-[280vh] border-b border-[#141414]"
       >
-        {/* Background Video: Responsive, Mobile-First Optimized with Instant Poster Fallback */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
-            preload="auto"
-            poster="/images/hero-poster.jpg"
-            aria-hidden="true"
-            className="w-full h-full object-cover object-[36%_center] sm:object-[45%_center] md:object-[58%_center] xl:object-center"
-          >
-            {/* Mobile-optimized 720p version for screens <= 768px for lightning-fast mobile load */}
-            <source src="/hero-video-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
-            {/* Modern high-efficiency WebM for Chrome/Edge/Firefox */}
-            <source src="/hero-video.webm" type="video/webm" />
-            {/* Standard full-HD 1080p MP4 for Desktop Safari & all other browsers */}
-            <source src="/hero-video.mp4" type="video/mp4" />
-            {/* Fallback image if video autoplay is restricted */}
-            <img 
-              src="/images/hero-poster.jpg" 
-              alt="Auto Moj London Luxury Accident Repair" 
-              className="w-full h-full object-cover object-[36%_center] sm:object-[45%_center] md:object-[58%_center] xl:object-center"
-            />
-          </video>
-          {/* Mobile: Top & bottom vignette leaving car door 100% visible in the middle. Desktop: Left-dark to right-transparent */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080808]/95 via-transparent via-45% to-[#080808]/80 md:bg-gradient-to-r md:from-[#080808] md:via-[#080808]/75 md:via-35% md:to-transparent md:to-65% z-10 pointer-events-none" />
-        </div>
+        {/* Pinned Viewport Container */}
+        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-start justify-start">
 
-        {/* Hero Content shifted ~35% towards top to perfectly reveal the car and door restoration */}
-        <div className="max-w-[1400px] relative z-20 mx-auto px-6 sm:px-10 lg:px-12 w-full pt-20 sm:pt-24 lg:pt-28 pb-16">
+          {/* Video Layer with Scroll Parallax & Zoom */}
           <div 
             style={{
-              transform: `translate3d(${mouseOffset.x}px, ${mouseOffset.y}px, 0)`,
-              transition: "transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)"
+              transform: `scale(${1 + scrollProgress * 0.08})`,
+              willChange: "transform"
             }}
-            className="max-w-xl space-y-6 hero-breathing-float will-change-transform"
+            className="absolute inset-0 z-0 overflow-hidden"
           >
-            <div className="hero-seq-1 inline-flex items-center gap-2 px-3.5 py-1.5 border border-[#C5A880]/40 bg-[#111111]/90 text-[10px] sm:text-[11px] tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[#C5A880] font-semibold backdrop-blur-sm shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse"></span>
-              <span>AUTO MOJ ACCIDENT REPAIR</span>
-            </div>
+            <video 
+              ref={videoRef}
+              muted 
+              playsInline 
+              preload="auto"
+              poster="/images/hero-poster.jpg?v=20260909_3"
+              aria-hidden="true"
+              className="w-full h-full object-cover object-[36%_center] sm:object-[45%_center] md:object-[58%_center] xl:object-center"
+            >
+              {/* Ultra-fast scrub-optimized MP4 with frequent keyframes (every 5 frames) */}
+              <source src="/hero-video-scroll-mobile.mp4?v=20260909_3" type="video/mp4" media="(max-width: 768px)" />
+              <source src="/hero-video-scroll.mp4?v=20260909_3" type="video/mp4" />
+              <source src="/hero-video.mp4?v=20260909_3" type="video/mp4" />
+              {/* Fallback image */}
+              <img 
+                src="/images/hero-poster.jpg?v=20260909_3" 
+                alt="Auto Moj London Luxury Accident Repair" 
+                className="w-full h-full object-cover object-[36%_center] sm:object-[45%_center] md:object-[58%_center] xl:object-center"
+              />
+            </video>
 
-            <h1 className="font-serif tracking-[0.1em] text-[#EDEDED] uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] space-y-1.5 sm:space-y-2.5">
-              {/* Line 1: AUTO MOJ - 100% Size (Enters First) */}
-              <span className="hero-seq-2 block text-4xl sm:text-6xl lg:text-7xl leading-[1.05]">
-                {t("hero.title1")}
-              </span>
-              
-              {/* Line 2: ACCIDENT REPAIR - In 2 Lines & 20% Smaller (Enters Second) */}
-              <span className="hero-seq-3 block text-2xl sm:text-4xl lg:text-[2.85rem] leading-[1.1] text-[#D8D8D8]">
-                <span className="block">{t("hero.title2.line1")}</span>
-                <span className="block">{t("hero.title2.line2")}</span>
-              </span>
-              
-              {/* Line 3: BUILT IN LONDON - Scaled Down 20% (Enters Third) */}
-              <span className="hero-seq-4 block text-lg sm:text-2xl lg:text-[2.15rem] leading-[1.15] text-[#B0B0B0]">
-                {t("hero.title3")} <span className="text-[#C5A880] hero-gold-glow inline-block">{t("hero.city")}</span>
-              </span>
-            </h1>
+            {/* Subtle Atelier Vignette Overlay: Car Door Remains 100% Crisp */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#080808]/95 via-transparent via-45% to-[#080808]/80 md:bg-gradient-to-r md:from-[#080808] md:via-[#080808]/75 md:via-35% md:to-transparent md:to-65% z-10 pointer-events-none" />
+          </div>
 
-            <p className="hero-seq-5 text-xs sm:text-sm tracking-[0.2em] text-[#8E8E8E] uppercase font-light max-w-md leading-relaxed pt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-              {t("hero.desc")}
-            </p>
-
-            <div className="hero-seq-6 pt-6">
-              <Link 
-                href="/get-a-quote" 
-                className="inline-flex items-center gap-2.5 border border-[#444444] hover:border-[#C5A880] text-[#EDEDED] hover:text-[#C5A880] px-6 py-3 text-[10px] tracking-[0.25em] uppercase font-medium transition-all duration-300 group bg-[#080808]/40 backdrop-blur-sm hover:shadow-[0_0_25px_rgba(197,168,128,0.3)]"
+          {/* Hero Content: Shifted ~35% Towards Top, Driven Dynamically By Scroll */}
+          <div className="max-w-[1400px] relative z-20 mx-auto px-6 sm:px-10 lg:px-12 w-full pt-20 sm:pt-24 lg:pt-28 pb-16">
+            <div 
+              style={{
+                transform: `translate3d(${mouseOffset.x}px, ${mouseOffset.y}px, 0)`,
+                transition: "transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)"
+              }}
+              className="max-w-xl space-y-6 will-change-transform"
+            >
+              {/* Badge */}
+              <div 
+                style={{
+                  opacity: Math.max(0.7, subLine1),
+                  transform: `translate3d(0, ${(1 - subLine1) * 10}px, 0)`
+                }}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-[#C5A880]/40 bg-[#111111]/90 text-[10px] sm:text-[11px] tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[#C5A880] font-semibold backdrop-blur-sm shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all duration-300"
               >
-                <span>{t("hero.cta")}</span>
-                <span className="text-xs text-[#C5A880] transition-transform group-hover:translate-x-1">&raquo;</span>
-              </Link>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse"></span>
+                <span>AUTO MOJ ACCIDENT REPAIR</span>
+              </div>
+
+              {/* Sequential Scroll-Driven Typography */}
+              <h1 className="font-serif tracking-[0.1em] text-[#EDEDED] uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] space-y-1.5 sm:space-y-2.5">
+                
+                {/* Line 1: AUTO MOJ - 100% Size (Present from initial scroll) */}
+                <span 
+                  style={{
+                    opacity: 0.2 + 0.8 * subLine1,
+                    transform: `translate3d(${(1 - subLine1) * 40}px, 0, 0)`,
+                    filter: `blur(${(1 - subLine1) * 3}px)`,
+                    transition: "transform 0.15s ease-out, opacity 0.15s ease-out"
+                  }}
+                  className="block text-4xl sm:text-6xl lg:text-7xl leading-[1.05]"
+                >
+                  {t("hero.title1")}
+                </span>
+                
+                {/* Line 2: ACCIDENT REPAIR - In 2 Lines & 40% Smaller (Slides In as you scroll 15% -> 48%) */}
+                <span 
+                  style={{
+                    opacity: subLine2,
+                    transform: `translate3d(${(1 - subLine2) * 80}px, 0, 0)`,
+                    filter: `blur(${(1 - subLine2) * 6}px)`,
+                    transition: "transform 0.15s ease-out, opacity 0.15s ease-out"
+                  }}
+                  className="block text-2xl sm:text-4xl lg:text-[2.85rem] leading-[1.1] text-[#D8D8D8]"
+                >
+                  <span className="block">{t("hero.title2.line1")}</span>
+                  <span className="block">{t("hero.title2.line2")}</span>
+                </span>
+                
+                {/* Line 3: BUILT IN LONDON - Scaled Down (Slides In as you scroll 45% -> 78%) */}
+                <span 
+                  style={{
+                    opacity: subLine3,
+                    transform: `translate3d(${(1 - subLine3) * 80}px, 0, 0)`,
+                    filter: `blur(${(1 - subLine3) * 6}px)`,
+                    transition: "transform 0.15s ease-out, opacity 0.15s ease-out"
+                  }}
+                  className="block text-lg sm:text-2xl lg:text-[2.15rem] leading-[1.15] text-[#B0B0B0]"
+                >
+                  {t("hero.title3")} <span className="text-[#C5A880] hero-gold-glow inline-block">{t("hero.city")}</span>
+                </span>
+              </h1>
+
+              {/* Description (Enters 70% -> 95%) */}
+              <p 
+                style={{
+                  opacity: subDesc,
+                  transform: `translate3d(${(1 - subDesc) * 40}px, 0, 0)`,
+                  filter: `blur(${(1 - subDesc) * 4}px)`,
+                  transition: "transform 0.15s ease-out, opacity 0.15s ease-out"
+                }}
+                className="text-xs sm:text-sm tracking-[0.2em] text-[#8E8E8E] uppercase font-light max-w-md leading-relaxed pt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+              >
+                {t("hero.desc")}
+              </p>
+
+              {/* CTA Button (Enters 70% -> 95%) */}
+              <div 
+                style={{
+                  opacity: subDesc,
+                  transform: `translate3d(${(1 - subDesc) * 40}px, 0, 0)`,
+                  transition: "transform 0.15s ease-out, opacity 0.15s ease-out"
+                }}
+                className="pt-6"
+              >
+                <Link 
+                  href="/get-a-quote" 
+                  className="inline-flex items-center gap-2.5 border border-[#444444] hover:border-[#C5A880] text-[#EDEDED] hover:text-[#C5A880] px-6 py-3 text-[10px] tracking-[0.25em] uppercase font-medium transition-all duration-300 group bg-[#080808]/40 backdrop-blur-sm hover:shadow-[0_0_25px_rgba(197,168,128,0.3)]"
+                >
+                  <span>{t("hero.cta")}</span>
+                  <span className="text-xs text-[#C5A880] transition-transform group-hover:translate-x-1">&raquo;</span>
+                </Link>
+              </div>
             </div>
           </div>
+
+          {/* Interactive Mode Toggle (Scroll-Driven vs Continuous AutoPlay) */}
+          <div className="absolute bottom-6 right-6 sm:right-10 z-30 flex items-center gap-3">
+            <button 
+              onClick={togglePlayMode}
+              className="flex items-center gap-2 px-3 py-1.5 bg-[#111111]/80 hover:bg-[#1A1A1A] border border-[#333333] hover:border-[#C5A880] text-[10px] tracking-[0.2em] text-[#C5A880] uppercase rounded transition-all backdrop-blur-md shadow-lg"
+              title={isPlaying ? "Switch to Scroll Control" : "Switch to Auto Play"}
+            >
+              <span>{isPlaying ? "⏸" : "▶"}</span>
+              <span className="hidden sm:inline">{isPlaying ? (lang === "fa" ? "حالت اسکرول" : "SCROLL MODE") : (lang === "fa" ? "پخش خودکار" : "AUTO PLAY")}</span>
+            </button>
+          </div>
+
+          {/* Elegant Luxury Scroll Guidance Indicator */}
+          <div 
+            style={{ 
+              opacity: scrollIndicatorOpacity,
+              pointerEvents: scrollIndicatorOpacity <= 0.05 ? "none" : "auto" 
+            }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 transition-opacity duration-300 text-center"
+          >
+            <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#C5A880] font-serif font-light">
+              {lang === "fa" ? "برای هدایت ویدیو اسکرول کنید ↓" : "SCROLL TO DISCOVER CRAFT ↓"}
+            </span>
+            <div className="w-[1px] h-6 bg-gradient-to-b from-[#C5A880] to-transparent animate-pulse" />
+          </div>
+
         </div>
       </section>
 
@@ -112,7 +290,7 @@ export default function HomePage() {
       <section id="craft" className="py-20 bg-[#080808] border-b border-[#141414]">
         <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-12">
           {/* Header */}
-          <div className="mb-8 border-b border-[#141414] pb-3">
+          <div className="mb-8 border-b border-[#141414] pb-3 scroll-reveal">
             <span className="text-[11px] uppercase tracking-[0.3em] text-[#C5A880] font-serif font-medium">
               {t("featured.title")}
             </span>
@@ -122,7 +300,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             
             {/* Card 1: SCRATCH & DENT REPAIR */}
-            <div className="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+            <div className="scroll-reveal scroll-delay-1 bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
               <div className="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
                 <img 
                   src="/images/door_restoration.jpg" 
@@ -142,7 +320,7 @@ export default function HomePage() {
             </div>
 
             {/* Card 2: RESPREY */}
-            <div className="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+            <div className="scroll-reveal scroll-delay-2 bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
               <div className="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
                 <img 
                   src="/images/artisan_hand_respray.jpg" 
@@ -162,7 +340,7 @@ export default function HomePage() {
             </div>
 
             {/* Card 3: PRECISION PDR REFLECTION */}
-            <div className="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+            <div className="scroll-reveal scroll-delay-3 bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
               <div className="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
                 <img 
                   src="/images/pdr_light.jpg" 
@@ -182,7 +360,7 @@ export default function HomePage() {
             </div>
 
             {/* Card 4: LOW-BAKE SPRAY PAINT */}
-            <div className="bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
+            <div className="scroll-reveal scroll-delay-4 bg-[#0C0C0C] border border-[#1C1C1C] p-4 flex flex-col group hover:border-[#C5A880]/50 transition-all duration-300">
               <div className="aspect-[4/3] overflow-hidden bg-black mb-4 border border-[#171717]">
                 <img 
                   src="/images/spray_gun.jpg" 
@@ -211,7 +389,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Specs List */}
-            <div className="lg:col-span-5 space-y-6">
+            <div className="lg:col-span-5 space-y-6 scroll-reveal-left">
               <div>
                 <h2 className="font-serif text-xl sm:text-2xl tracking-[0.15em] text-[#EDEDED] uppercase font-semibold">
                   {t("spec.title")}
@@ -264,7 +442,7 @@ export default function HomePage() {
             </div>
 
             {/* Right Showcase Image */}
-            <div className="lg:col-span-7 flex justify-center lg:justify-end">
+            <div className="lg:col-span-7 flex justify-center lg:justify-end scroll-reveal-right">
               <div className="w-full max-w-lg border border-[#1C1C1C] bg-[#0C0C0C] p-3 sm:p-4">
                 <img 
                   src="/images/metal_shaping.jpg" 
@@ -284,7 +462,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Image */}
-            <div className="lg:col-span-6">
+            <div className="lg:col-span-6 scroll-reveal-left">
               <div className="border border-[#1C1C1C] bg-[#0C0C0C] p-3 sm:p-4">
                 <img 
                   src="/images/carbon.jpg" 
@@ -295,7 +473,7 @@ export default function HomePage() {
             </div>
 
             {/* Right Text with AM Watermark */}
-            <div className="lg:col-span-6 space-y-6 relative">
+            <div className="lg:col-span-6 space-y-6 relative scroll-reveal-right">
               <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none select-none">
                 <span className="text-[120px] font-serif font-bold text-[#C5A880]">AM</span>
               </div>
