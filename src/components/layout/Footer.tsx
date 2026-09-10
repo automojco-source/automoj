@@ -5,7 +5,7 @@ import { Shield, Award, Wrench, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export function Footer() {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <footer className="bg-[#050505] text-[#8E8E8E] border-t border-[#1C1C1C] pt-16 pb-12 font-sans">
@@ -75,7 +75,7 @@ export function Footer() {
             <li><Link href="/services/accident-repair" className="hover:text-[#C5A880] transition-colors">{t("footer.col1.1")}</Link></li>
             <li><Link href="/services/car-paint" className="hover:text-[#C5A880] transition-colors">{t("footer.col1.2")}</Link></li>
             <li><Link href="/services/dent-repair" className="hover:text-[#C5A880] transition-colors">{t("footer.col1.3")}</Link></li>
-            <li><Link href="/services/alloy-wheel-repair" className="hover:text-[#C5A880] transition-colors">{t("footer.col1.4")}</Link></li>
+            <li><Link href="/services/panel-beating" className="hover:text-[#C5A880] transition-colors">{t("footer.col1.4")}</Link></li>
           </ul>
         </div>
 
@@ -84,8 +84,8 @@ export function Footer() {
           <h5 className="text-[10px] uppercase tracking-[0.2em] text-[#EDEDED] font-semibold mb-4">{t("footer.col2.title")}</h5>
           <ul className="space-y-2.5 text-[10px] tracking-wider font-light uppercase">
             <li><Link href="/about" className="hover:text-[#C5A880] transition-colors">{t("footer.col2.1")}</Link></li>
-            <li><Link href="/#craft" className="hover:text-[#C5A880] transition-colors">{t("footer.col2.2")}</Link></li>
-            <li><Link href="/before-after" className="hover:text-[#C5A880] transition-colors">{t("footer.col2.3")}</Link></li>
+            <li><Link href="/services" className="hover:text-[#C5A880] transition-colors">{t("footer.col2.2")}</Link></li>
+            {/* <li><Link href="/before-after" className="hover:text-[#C5A880] transition-colors">{t("footer.col2.3")}</Link></li> */}
             <li><Link href="/contact" className="hover:text-[#C5A880] transition-colors">{t("footer.col2.4")}</Link></li>
           </ul>
         </div>

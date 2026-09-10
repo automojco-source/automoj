@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-latin), var(--font-fa), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono-latin), ui-monospace, "SFMono-Regular", monospace;
   --font-heading: var(--font-sans);
   
   --color-ring: var(--ring);
@@ -66,6 +66,64 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Persian typography
+ *
+ * Three things break Persian text when a layout is designed around Latin:
+ *   - the wrong font stack (Geist has no Persian glyphs at all)
+ *   - letter-spacing, which severs the joins between connected letters
+ *   - uppercase, which is meaningless here and signals a Latin-only design
+ *
+ * The rules below correct all three wherever [lang="fa"] is set, so the
+ * component classes themselves stay untouched.
+ * ------------------------------------------------------------------ */
+/* Note: `@theme inline` bakes the token's value straight into the utility, so
+   redefining --font-sans here would have no effect. The family is set directly. */
+[lang="fa"] {
+  font-family: var(--font-fa), var(--font-latin), Tahoma, sans-serif;
+  line-height: 1.9;
+}
+
+[lang="fa"] [class*="tracking-"],
+[lang="fa"] [style*="letter-spacing"] {
+  letter-spacing: normal;
+}
+
+[lang="fa"] .uppercase {
+  text-transform: none;
+}
+
+/* Latin runs inside Persian text (registrations, model names, phone numbers)
+   keep the Latin face and their own direction. */
+[lang="fa"] .font-mono,
+[lang="fa"] [dir="ltr"] {
+  font-family: var(--font-mono-latin), ui-monospace, monospace;
+}
+
+/* ------------------------------------------------------------------ *
+ * Reduced motion — WCAG 2.3.3. The hero scroll sequence, the reveal
+ * transitions and the gold gleam all animate; anyone who has asked their
+ * system for less motion gets the page at its resting state instead.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .scroll-reveal,
+  .scroll-reveal-left,
+  .scroll-reveal-right {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 }
 

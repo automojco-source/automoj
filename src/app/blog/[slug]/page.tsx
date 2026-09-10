@@ -47,7 +47,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
           <h3>2. Paintless Dent Removal (PDR)</h3>
           <p>
-            If the paint hasn't been broken, dents can often be massaged out from behind the panel. This is a highly skilled process starting from £120, and it retains your car's factory paint finish.
+            If the paint hasn&rsquo;t been broken, dents can often be massaged out from behind the panel. This is a highly skilled process starting from £120, and it retains your car&rsquo;s factory paint finish.
           </p>
           
           <div className="bg-surface p-6 rounded-xl border border-border my-8">

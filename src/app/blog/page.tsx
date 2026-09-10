@@ -31,7 +31,7 @@ export default function BlogIndexPage() {
       <div className="max-w-3xl mx-auto text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">Bodyshop Blog & Guides</h1>
         <p className="text-muted-foreground text-lg">
-          Expert advice, repair guides, and industry news from London's premium accident repair centre.
+          Expert advice, repair guides, and industry news from London&rsquo;s premium accident repair centre.
         </p>
       </div>
 

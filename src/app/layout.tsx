@@ -1,22 +1,47 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { LanguageProvider } from "@/context/LanguageContext";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-latin",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-mono-latin",
   subsets: ["latin"],
+  display: "swap",
 });
 
+/**
+ * Vazirmatn carries the Persian glyphs Geist does not have. Self-hosted so the
+ * Farsi side of the site renders in the brand face rather than falling back to
+ * Tahoma. Kept to four weights to hold the payload down.
+ */
+const vazirmatn = localFont({
+  src: [
+    { path: "./fonts/Vazirmatn-Regular.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/Vazirmatn-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/Vazirmatn-Bold.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/Vazirmatn-Black.woff2", weight: "900", style: "normal" },
+  ],
+  variable: "--font-fa",
+  display: "swap",
+});
+
+/**
+ * metadataBase turns the relative URLs in openGraph/twitter/canonical into
+ * absolute ones. Without it Next falls back to localhost:3000 at build time and
+ * every social preview points at a machine nobody else can reach.
+ */
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://automoj.co.uk";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Auto Moj | Accident Repair Centre London",
   description: "London's premier independent accident repair atelier. Specialising in prestige vehicle restoration, traditional panel beating, and low-bake paint.",
   icons: {
@@ -35,14 +60,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col">
         <LanguageProvider>
-          <Navbar />
-          <div className="flex-1 mt-14 sm:mt-16">{children}</div>
-          <WhatsAppButton />
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
         </LanguageProvider>
       </body>
     </html>

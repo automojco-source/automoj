@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useCallback, useSyncExternalStore } from "react";
 
 type Language = "EN" | "FA";
 
@@ -39,7 +39,7 @@ const translations: Record<Language, Record<string, string>> = {
     "featured.title": "FEATURED COLLECTIONS",
     "card1.title": "DENT & SCRATCH",
     "card1.link": "VIEW SPEC",
-    "card2.title": "OVEN RESPREY",
+    "card2.title": "OVEN RESPRAY",
     "card2.link": "VIEW SPEC",
     "card3.title": "PRECISION PDR",
     "card3.link": "VIEW SPEC",
@@ -49,7 +49,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Section 3 - Monoblock Spec
     "spec.badge": "HAND PANEL BEATING",
     "spec.title": "AUTO MOJ M10-FORGED",
-    "spec.price": "£950 / RESTORATION",
+    "spec.price": "FREE ESTIMATE / BESPOKE ASSESSMENT",
     "spec.row1.label": "TOLERANCE",
     "spec.row1.value": "± 0.5mm Contour Precision",
     "spec.row2.label": "ALLOY TYPE",
@@ -62,7 +62,7 @@ const translations: Record<Language, Record<string, string>> = {
     "spec.row5.value": "Low-Bake Anti-Corrosion E-Coat",
     "spec.row6.label": "WARRANTY",
     "spec.row6.value": "Lifetime Structural Guarantee",
-    "spec.cta": "VIEW SERVICE",
+    "spec.cta": "UPLOAD PHOTOS & GET QUOTE",
 
     // Section 4 - Philosophy
     "phil.title": "PRECISION. STRENGTH. STYLE.",
@@ -141,7 +141,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Section 3 - Monoblock Spec
     "spec.badge": "صافکاری سنتی با چکش و فرم‌دهی دست",
     "spec.title": "شاسی‌کشی و فرم‌دهی M10 اتوموج",
-    "spec.price": "شروع از ۹۵۰ پوند / ترمیم تخصصی",
+    "spec.price": "کارشناسی و برآورد رایگان هزینه / قیمت‌گذاری اختصاصی",
     "spec.row1.label": "میزان تلورانس و دقت",
     "spec.row1.value": "دقت ۰.۵± میلیمتر مطابق شابلون کارخانه",
     "spec.row2.label": "نوع آلیاژ بدنه",
@@ -154,7 +154,7 @@ const translations: Record<Language, Record<string, string>> = {
     "spec.row5.value": "پوشش الکترواستاتیک ضدزنگ کوره",
     "spec.row6.label": "گارانتی شرکتی",
     "spec.row6.value": "ضمانت مادام‌العمر خطوط و استحکام بدنه",
-    "spec.cta": "مشاهده مشخصات فنی",
+    "spec.cta": "ارسال عکس خسارت و استعلام فوری قیمت",
 
     // Section 4 - Philosophy
     "phil.title": "دقت بالا. استحکام. زیبایی ماندگار.",
@@ -203,30 +203,97 @@ const LanguageContext = createContext<LanguageContextType>({
   t: (key: string) => key,
 });
 
+/* -------------------------------------------------------------------------- *
+ * Language store
+ *
+ * The chosen language lives in localStorage, which is an external system, so
+ * it is read through useSyncExternalStore rather than copied into state inside
+ * an effect. That matters for two reasons: setState inside an effect causes a
+ * cascading render, and the server has no localStorage, so the first client
+ * render must match the server's ("EN") or hydration breaks.
+ *
+ * This is a stopgap. The durable fix is /en and /fa route segments so the
+ * server renders the right language, with the correct lang and dir in the HTML
+ * it sends — without which the Farsi content is invisible to search engines.
+ * -------------------------------------------------------------------------- */
+
+const STORAGE_KEY = "auto_moj_lang";
+
+let currentLang: Language = "EN";
+let initialised = false;
+const listeners = new Set<() => void>();
+
+function readStored(): Language {
+  try {
+    const value = localStorage.getItem(STORAGE_KEY);
+    return value === "FA" || value === "EN" ? value : "EN";
+  } catch {
+    // Private mode, or storage disabled. English is a fine default.
+    return "EN";
+  }
+}
+
+function applyToDocument(lang: Language) {
+  if (typeof document === "undefined") return;
+  document.documentElement.lang = lang === "FA" ? "fa" : "en";
+  document.documentElement.dir = lang === "FA" ? "rtl" : "ltr";
+}
+
+function emit() {
+  for (const listener of listeners) listener();
+}
+
+function subscribe(listener: () => void): () => void {
+  if (!initialised) {
+    initialised = true;
+    currentLang = readStored();
+    applyToDocument(currentLang);
+  }
+
+  listeners.add(listener);
+
+  // Keep other tabs of the same site in step.
+  const onStorage = (event: StorageEvent) => {
+    if (event.key !== STORAGE_KEY) return;
+    const next = readStored();
+    if (next === currentLang) return;
+    currentLang = next;
+    applyToDocument(next);
+    emit();
+  };
+  window.addEventListener("storage", onStorage);
+
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
+const getSnapshot = (): Language => currentLang;
+const getServerSnapshot = (): Language => "EN";
+
+function writeLang(next: Language) {
+  if (next === currentLang) return;
+  currentLang = next;
+  try {
+    localStorage.setItem(STORAGE_KEY, next);
+  } catch {
+    // Not being able to remember the choice is survivable; switching is not.
+  }
+  applyToDocument(next);
+  emit();
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Language>("EN");
+  const lang = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const setLang = (newLang: Language) => {
-    setLangState(newLang);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("auto_moj_lang", newLang);
-      document.documentElement.dir = newLang === "FA" ? "rtl" : "ltr";
-      document.documentElement.lang = newLang === "FA" ? "fa" : "en";
-    }
-  };
+  const setLang = useCallback((next: Language) => writeLang(next), []);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("auto_moj_lang") as Language;
-    if (saved && (saved === "EN" || saved === "FA")) {
-      setLangState(saved);
-      document.documentElement.dir = saved === "FA" ? "rtl" : "ltr";
-      document.documentElement.lang = saved === "FA" ? "fa" : "en";
-    }
-  }, []);
-
-  const t = (key: string): string => {
-    return translations[lang]?.[key] || translations["EN"]?.[key] || key;
-  };
+  const t = useCallback(
+    (key: string): string =>
+      translations[lang]?.[key] ?? translations.EN?.[key] ?? key,
+    [lang],
+  );
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>

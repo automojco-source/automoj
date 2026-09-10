@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Award, ShieldCheck, Users } from "lucide-react";
+import { Award, ShieldCheck, Users } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 

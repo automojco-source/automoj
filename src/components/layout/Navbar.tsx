@@ -45,9 +45,10 @@ export function Navbar() {
           <Link href="/services/dent-repair" className="hover:text-[#C5A880] transition-colors">
             {t("nav.pdr")}
           </Link>
+          {/* RESTORATIONS LINK (Uncomment when real workshop before/after photos are uploaded):
           <Link href="/before-after" className="hover:text-[#C5A880] transition-colors">
             {t("nav.restorations")}
-          </Link>
+          </Link> */}
           <Link href="/about" className="hover:text-[#C5A880] transition-colors">
             {t("nav.about")}
           </Link>
@@ -132,9 +133,10 @@ export function Navbar() {
             <Link href="/services/dent-repair" onClick={() => setMobileMenuOpen(false)} className="text-[#8E8E8E] hover:text-[#C5A880] py-1.5 border-b border-[#141414] uppercase">
               {t("nav.pdr")}
             </Link>
+            {/* RESTORATIONS LINK (Uncomment when real workshop before/after photos are uploaded):
             <Link href="/before-after" onClick={() => setMobileMenuOpen(false)} className="text-[#8E8E8E] hover:text-[#C5A880] py-1.5 border-b border-[#141414] uppercase">
               {t("nav.restorations")}
-            </Link>
+            </Link> */}
             <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="text-[#8E8E8E] hover:text-[#C5A880] py-1.5 border-b border-[#141414] uppercase">
               {t("nav.about")}
             </Link>

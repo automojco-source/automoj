@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1050px;
+    height: 600px;
+    background: #080808;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+  }
+  .card-container {
+    width: 1050px;
+    height: 600px;
+    position: relative;
+    background: radial-gradient(circle at 35% 50%, #151515 0%, #060606 100%);
+    border-radius: 12px;
+    padding: 44px 55px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: inset 0 0 80px rgba(0,0,0,0.85);
+    overflow: hidden;
+  }
+  .safe-border {
+    position: absolute;
+    top: 20px; bottom: 20px; left: 20px; right: 20px;
+    border: 1px solid rgba(197, 168, 128, 0.3);
+    border-radius: 6px;
+    pointer-events: none;
+  }
+
+  /* Header Bar */
+  .top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #1C1C1C;
+  }
+  .brand-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .mini-emblem {
+    width: 58px;
+    height: 58px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1.5px solid rgba(197, 168, 128, 0.6);
+    box-shadow: 0 0 16px rgba(197, 168, 128, 0.2);
+    flex-shrink: 0;
+  }
+  .mini-emblem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .header-text h2 {
+    font-family: 'Times New Roman', Georgia, serif;
+    color: #FFFFFF;
+    font-size: 26px;
+    letter-spacing: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  .header-text p {
+    color: #C5A880;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .header-badge {
+    text-align: right;
+  }
+  .header-badge .title {
+    font-family: 'Times New Roman', serif;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .header-badge .subtitle {
+    color: #C5A880;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  /* Main Info Grid */
+  .main-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    margin: 8px 0;
+  }
+
+  /* Left Contacts: Highly Legible Typography */
+  .contact-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+    max-width: 610px;
+  }
+  .contact-item {
+    display: flex;
+    align-items: baseline;
+  }
+  .item-label {
+    width: 130px;
+    flex-shrink: 0;
+    color: #C5A880;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .item-value {
+    color: #F0F0F0;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+  }
+  .item-value.phone-highlight {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: 1.2px;
+  }
+  .item-value.address {
+    font-size: 15px;
+    line-height: 1.4;
+    color: #E2E2E2;
+  }
+
+  /* Right QR Code: 20mm standard (210px) */
+  .qr-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: #0B0B0B;
+    border: 1.5px solid rgba(197, 168, 128, 0.45);
+    padding: 14px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+    flex-shrink: 0;
+  }
+  .qr-code-img {
+    width: 150px;
+    height: 150px;
+    background: #111111;
+    border: 1px solid #262626;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .qr-title {
+    color: #C5A880;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .qr-hint {
+    color: #888888;
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* Bottom Trust Certifications */
+  .footer-trust {
+    border-top: 1px solid #1C1C1C;
+    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #8E8E8E;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+  }
+  .dot { color: #C5A880; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="card-container">
+    <div class="safe-border"></div>
+
+    <!-- Header -->
+    <div class="top-section">
+      <div class="brand-header">
+        <div class="mini-emblem">
+          <img src="./site-icon.png" alt="Auto Moj">
+        </div>
+        <div class="header-text">
+          <h2>AUTO MOJ</h2>
+          <p>ACCIDENT REPAIR ATELIER • LONDON</p>
+        </div>
+      </div>
+      <div class="header-badge">
+        <div class="title">ATELIER DIRECTORS</div>
+        <div class="subtitle">VALUATION & CLAIMS MANAGEMENT</div>
+      </div>
+    </div>
+
+    <!-- Main Contacts & QR Code -->
+    <div class="main-grid">
+      <div class="contact-col">
+        <div class="contact-item">
+          <span class="item-label">TELEPHONE</span>
+          <span class="item-value phone-highlight">0207 123 6946</span>
+        </div>
+        <div class="contact-item">
+          <span class="item-label">MOBILE / 24H</span>
+          <span class="item-value phone-highlight">+44 (0) 7717 917133</span>
+        </div>
+        <div class="contact-item">
+          <span class="item-label">EMAIL</span>
+          <span class="item-value">automoj.co@gmail.com</span>
+        </div>
+        <div class="contact-item">
+          <span class="item-label">WEBSITE</span>
+          <span class="item-value">www.automoj.co.uk</span>
+        </div>
+        <div class="contact-item">
+          <span class="item-label">WORKSHOP</span>
+          <span class="item-value address">Bushey & Oxhey Railway Yard, Pinner Rd, Watford, WD19 4EA</span>
+        </div>
+      </div>
+
+      <!-- Scannable High-Precision QR Box -->
+      <div class="qr-wrapper">
+        <div class="qr-code-img">
+          <svg viewBox="0 0 100 100" width="140" height="140">
+            <rect width="100" height="100" fill="#0A0A0A"/>
+            <!-- 3 Finder Eyes -->
+            <rect x="8" y="8" width="26" height="26" fill="none" stroke="#C5A880" stroke-width="3.5"/>
+            <rect x="14" y="14" width="14" height="14" fill="#C5A880"/>
+
+            <rect x="66" y="8" width="26" height="26" fill="none" stroke="#C5A880" stroke-width="3.5"/>
+            <rect x="72" y="14" width="14" height="14" fill="#C5A880"/>
+
+            <rect x="8" y="66" width="26" height="26" fill="none" stroke="#C5A880" stroke-width="3.5"/>
+            <rect x="14" y="72" width="14" height="14" fill="#C5A880"/>
+
+            <!-- Center Gold AM Monogram Core -->
+            <rect x="38" y="38" width="24" height="24" fill="#141414" stroke="#C5A880" stroke-width="1.8" rx="3"/>
+            <text x="50" y="54" text-anchor="middle" fill="#C5A880" font-family="'Times New Roman', serif" font-size="11" font-weight="bold">AM</text>
+
+            <!-- Data Modules -->
+            <rect x="40" y="12" width="8" height="6" fill="#C5A880"/>
+            <rect x="52" y="12" width="8" height="6" fill="#C5A880"/>
+            <rect x="40" y="22" width="20" height="6" fill="#C5A880"/>
+            <rect x="12" y="40" width="6" height="18" fill="#C5A880"/>
+            <rect x="22" y="46" width="10" height="6" fill="#C5A880"/>
+            <rect x="68" y="40" width="10" height="10" fill="#C5A880"/>
+            <rect x="82" y="44" width="6" height="16" fill="#C5A880"/>
+            <rect x="40" y="68" width="6" height="18" fill="#C5A880"/>
+            <rect x="52" y="76" width="10" height="8" fill="#C5A880"/>
+            <rect x="68" y="72" width="20" height="6" fill="#C5A880"/>
+            <rect x="76" y="82" width="10" height="8" fill="#C5A880"/>
+          </svg>
+        </div>
+        <div class="qr-title">INSTANT ESTIMATE</div>
+        <div class="qr-hint">SCAN TO UPLOAD ACCIDENT PHOTOS</div>
+      </div>
+    </div>
+
+    <!-- Bottom Strip -->
+    <div class="footer-trust">
+      <span>OEM CERTIFIED MATERIALS</span>
+      <span class="dot">•</span>
+      <span>LOW-BAKE REFINISHING</span>
+      <span class="dot">•</span>
+      <span>LIFETIME STRUCTURAL GUARANTEE</span>
+      <span class="dot">•</span>
+      <span>DIRECT UK INSURANCE LIAISON</span>
+    </div>
+  </div>
+</body>
+</html>

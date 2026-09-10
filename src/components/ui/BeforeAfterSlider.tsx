@@ -1,54 +1,50 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { MoveHorizontal } from "lucide-react";
 
 interface BeforeAfterSliderProps {
   image: string;
+  beforeImage?: string;
+  alt?: string;
 }
 
-export function BeforeAfterSlider({ image }: BeforeAfterSliderProps) {
+export function BeforeAfterSlider({ image, beforeImage, alt = "" }: BeforeAfterSliderProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleMove = (clientX: number) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
+  const handleMove = useCallback((clientX: number) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    const percent = (x / rect.width) * 100;
-    setSliderPosition(percent);
-  };
-
-  const onMouseMove = (e: MouseEvent) => {
-    if (!isDragging) return;
-    handleMove(e.clientX);
-  };
-
-  const onTouchMove = (e: TouchEvent) => {
-    if (!isDragging) return;
-    handleMove(e.touches[0].clientX);
-  };
+    setSliderPosition((x / rect.width) * 100);
+  }, []);
 
   useEffect(() => {
-    if (isDragging) {
-      window.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("mouseup", () => setIsDragging(false));
-      window.addEventListener("touchmove", onTouchMove);
-      window.addEventListener("touchend", () => setIsDragging(false));
-    }
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", () => setIsDragging(false));
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", () => setIsDragging(false));
-    };
-  }, [isDragging]);
+    if (!isDragging) return;
+
+    // One AbortController removes every listener at once. The previous version
+    // passed a fresh arrow function to removeEventListener, so nothing was ever
+    // actually removed and each drag leaked another set of window listeners.
+    const controller = new AbortController();
+    const { signal } = controller;
+    const stop = () => setIsDragging(false);
+
+    window.addEventListener("mousemove", (e) => handleMove(e.clientX), { signal });
+    window.addEventListener("touchmove", (e) => handleMove(e.touches[0].clientX), { signal });
+    window.addEventListener("mouseup", stop, { signal });
+    window.addEventListener("touchend", stop, { signal });
+    window.addEventListener("touchcancel", stop, { signal });
+
+    return () => controller.abort();
+  }, [isDragging, handleMove]);
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="relative w-full aspect-[16/9] overflow-hidden rounded-xl select-none cursor-ew-resize group"
+      className="relative w-full aspect-[16/10] overflow-hidden select-none cursor-ew-resize bg-black"
       onMouseDown={(e) => {
         setIsDragging(true);
         handleMove(e.clientX);
@@ -58,36 +54,37 @@ export function BeforeAfterSlider({ image }: BeforeAfterSliderProps) {
         handleMove(e.touches[0].clientX);
       }}
     >
-      {/* AFTER IMAGE (Perfect condition) */}
-      <img 
-        src={image} 
-        alt="After Repair" 
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none" 
-      />
-      
-      {/* BEFORE IMAGE (Simulated damage via CSS filters for prototyping) */}
-      <img 
-        src={image} 
-        alt="Before Repair" 
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none saturate-50 contrast-125 brightness-75" 
-        style={{ 
-          clipPath: `polygon(0 0, ${sliderPosition}% 0, ${sliderPosition}% 100%, 0 100%)` 
-        }}
+      <img src={image} alt={alt} className="absolute inset-0 w-full h-full object-cover" />
+
+      {/* Clipped rather than width-constrained, so the image never needs
+          measuring and the two halves always line up pixel for pixel. */}
+      <img
+        src={beforeImage ?? image}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover filter grayscale brightness-75"
+        style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       />
 
-      {/* SLIDER LINE & HANDLE */}
-      <div 
-        className="absolute top-0 bottom-0 w-1 bg-white flex items-center justify-center z-10"
-        style={{ left: `calc(${sliderPosition}% - 2px)` }}
+      <div
+        className="absolute top-0 bottom-0 w-[2px] bg-[#C5A880] pointer-events-none"
+        style={{ left: `${sliderPosition}%` }}
       >
-        <div className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(0,0,0,0.5)] transition-transform group-hover:scale-110">
-          <MoveHorizontal className="w-6 h-6" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#C5A880] flex items-center justify-center shadow-lg">
+          <MoveHorizontal className="w-4 h-4 text-[#080808]" />
         </div>
       </div>
-      
-      {/* LABELS */}
-      <div className="absolute top-4 left-4 bg-black/80 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-widest backdrop-blur-md">BEFORE</div>
-      <div className="absolute top-4 right-4 bg-primary text-black px-4 py-1.5 rounded-full text-xs font-bold tracking-widest shadow-lg">AFTER</div>
+
+      {/* Keyboard access: the slider is also operable without a pointer. */}
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={sliderPosition}
+        aria-label="Reveal the before image"
+        onChange={(e) => setSliderPosition(Number(e.target.value))}
+        className="absolute bottom-3 left-1/2 -translate-x-1/2 w-2/3 opacity-0 focus-visible:opacity-100"
+      />
     </div>
   );
 }

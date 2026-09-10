@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function HomePage() {
@@ -303,7 +303,7 @@ export default function HomePage() {
             className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 transition-opacity duration-300 text-center"
           >
             <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#C5A880] font-serif font-light">
-              {lang === "fa" ? "برای هدایت انیمیشن اسکرول کنید ↓" : "SCROLL TO DISCOVER CRAFT ↓"}
+              {lang === "FA" ? "برای هدایت انیمیشن اسکرول کنید ↓" : "SCROLL TO DISCOVER CRAFT ↓"}
             </span>
             <div className="w-[1px] h-6 bg-gradient-to-b from-[#C5A880] to-transparent animate-pulse" />
           </div>
@@ -458,10 +458,10 @@ export default function HomePage() {
               <div className="pt-3">
                 <Link 
                   href="/get-a-quote" 
-                  className="inline-flex items-center gap-2 border border-[#333333] hover:border-[#C5A880] text-[#EDEDED] hover:text-[#C5A880] px-6 py-2.5 text-[10px] tracking-[0.25em] uppercase font-medium transition-all duration-300"
+                  className="inline-flex items-center gap-2 border border-[#C5A880]/60 bg-[#C5A880]/10 hover:bg-[#C5A880] text-[#C5A880] hover:text-[#080808] px-6 py-3 text-[10px] tracking-[0.2em] uppercase font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(197,168,128,0.1)]"
                 >
                   <span>{t("spec.cta")}</span>
-                  <span className="text-xs text-[#C5A880]">&raquo;</span>
+                  <span className="text-xs">&raquo;</span>
                 </Link>
               </div>
             </div>

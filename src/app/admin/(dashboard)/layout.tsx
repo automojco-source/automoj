@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { LayoutDashboard, Users, FileText, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Settings } from "lucide-react";
+import { AdminLogoutButton } from "@/components/admin/AdminLogoutButton";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -24,9 +25,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
         </nav>
         <div className="p-4 border-t border-border">
-          <button className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-destructive w-full rounded-lg font-medium transition-colors">
-            <LogOut className="w-5 h-5" /> Logout
-          </button>
+          <AdminLogoutButton />
         </div>
       </aside>
 

@@ -1,30 +1,39 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/context/LanguageContext";
 
+/**
+ * The number comes from NEXT_PUBLIC_WHATSAPP_NUMBER. If it is not set the
+ * button does not render at all — better than a button that opens WhatsApp on
+ * a number nobody answers.
+ */
 export function WhatsAppButton() {
   const pathname = usePathname();
-  
-  // Hide on admin routes
-  if (pathname?.startsWith("/admin")) {
-    return null;
-  }
+  const { lang } = useLanguage();
+  const fa = lang === "FA";
 
-  const phoneNumber = "447123456789"; 
-  const message = "Hi Auto Moj, I'm interested in an accident repair quote for my car.";
+  const phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+
+  if (!phoneNumber) return null;
+  if (pathname?.startsWith("/admin")) return null;
+
+  const message = fa
+    ? "سلام اتوموج، برای تعمیر خودرویم درخواست استعلام قیمت دارم."
+    : "Hi Auto Moj, I'd like a quote for accident repair on my car.";
+
   const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
   return (
-    <Link 
+    <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300"
-      aria-label="Chat with us on WhatsApp"
+      aria-label={fa ? "گفت‌وگو در واتساپ" : "Chat with us on WhatsApp"}
+      className="fixed bottom-6 end-6 z-50 flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300"
     >
       <MessageCircle className="w-7 h-7" />
-    </Link>
+    </a>
   );
 }

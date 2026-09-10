@@ -36,7 +36,7 @@ export default function ServicesIndexPage() {
         : ["اسکن و ساخت دقیق رنگ با دستگاه کامپیوتری", "پخت رنگ در کوره مادون قرمز", "ضمانت مادام‌العمر کیفیت رنگ و پوسته نشدن"]
     },
     {
-      slug: "alloy-wheel-repair",
+      slug: "panel-beating",
       title: lang === "EN" ? "Hand Panel Beating" : "صافکاری سنتی و فرم‌دهی دستی",
       shortDesc: lang === "EN" ? "Master panel beating on bespoke aluminium & steel bodywork." : "فرم‌دهی دستی گلگیر و درب‌ها با چکش‌های مخصوص صافکاری و چرخ انگلیسی.",
       img: "/images/metal_shaping.jpg",
