@@ -74,6 +74,21 @@ const nextConfig: NextConfig = {
       // Temporary (307) on purpose — this is coming back.
       { source: "/before-after", destination: "/services", permanent: false },
       { source: "/restorations", destination: "/services", permanent: false },
+      /**
+       * The blog is offline (307, not 308 — it is coming back).
+       *
+       * All three posts render the SAME hardcoded article body: the PDR post
+       * and the "what to do after an accident" post both display the pricing
+       * guide, under their own titles. Three URLs with identical content read
+       * as low quality to a search engine and as carelessness to a customer,
+       * which costs more than having no blog at all. It also quotes prices
+       * (£95, £120) that have not been confirmed.
+       *
+       * To bring it back: give each post its own body, confirm or remove the
+       * prices, state whether they include VAT, and link /blog from the nav.
+       */
+      { source: "/blog", destination: "/services", permanent: false },
+      { source: "/blog/:slug", destination: "/services", permanent: false },
     ];
   },
 };

@@ -31,8 +31,9 @@ import {
   type DamageType,
   type ContactMethod,
 } from "@/lib/validation";
+import { SITE } from "@/lib/site";
 
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
+const WHATSAPP_NUMBER = SITE.whatsapp;
 
 type FormState = {
   regNumber: string;
@@ -221,9 +222,13 @@ export function QuoteForm() {
 
         <div className="border-t border-[#1C1C1C] pt-6 space-y-4">
           <p className="text-xs text-[#8E8E8E] font-light">
-            {fa
-              ? "برای برآورد دقیق‌تر، عکس‌های آسیب‌دیدگی را همراه با کد پیگیری برای ما بفرستید."
-              : "For a more accurate estimate, send us photos of the damage along with your reference."}
+            {waUrl
+              ? fa
+                ? "برای برآورد دقیق‌تر، عکس‌های آسیب‌دیدگی را همراه با کد پیگیری برای ما بفرستید."
+                : "For a more accurate estimate, send us photos of the damage along with your reference."
+              : fa
+                ? `اگر می‌خواهید، عکس‌های آسیب‌دیدگی را همراه با کد پیگیری به ${SITE.email} ایمیل کنید یا با ${SITE.telephone.display} تماس بگیرید تا برآورد دقیق‌تری داشته باشیم.`
+                : `If you'd like, email photos of the damage to ${SITE.email} or call ${SITE.telephone.display} with your reference — it helps us give a more accurate estimate.`}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             {waUrl && (
@@ -419,11 +424,13 @@ export function QuoteForm() {
                 value={data.description}
                 onChange={(e) => set("description", e.target.value)}
               />
-              <p className="text-[10px] text-[#666666] font-light">
-                {fa
-                  ? "پس از ثبت درخواست، می‌توانید عکس‌های خسارت را از طریق واتساپ برای ما بفرستید."
-                  : "After you submit, you can send us photos of the damage over WhatsApp."}
-              </p>
+              {WHATSAPP_NUMBER && (
+                <p className="text-[10px] text-[#666666] font-light">
+                  {fa
+                    ? "پس از ثبت درخواست، می‌توانید عکس‌های خسارت را از طریق واتساپ برای ما بفرستید."
+                    : "After you submit, you can send us photos of the damage over WhatsApp."}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -639,8 +646,8 @@ export function QuoteForm() {
                 />
                 <span>
                   {fa
-                    ? "موافقم که اتوموج از اطلاعات بالا برای پاسخ به این درخواست استعلام استفاده کند. "
-                    : "I agree that Auto Moj may use these details to respond to my enquiry. "}
+                    ? "این اطلاعات را خوانده و می‌پذیرم که اتوموج از اطلاعات بالا برای پاسخ به این درخواست استعلام استفاده کند. "
+                    : "I have read, and accept, how Auto Moj will use these details to respond to my enquiry, as set out in the "}
                   <a
                     href="/privacy-policy"
                     target="_blank"

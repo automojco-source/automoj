@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import NextImage from "next/image";
 import { MoveHorizontal } from "lucide-react";
 
 interface BeforeAfterSliderProps {
@@ -54,15 +55,17 @@ export function BeforeAfterSlider({ image, beforeImage, alt = "" }: BeforeAfterS
         handleMove(e.touches[0].clientX);
       }}
     >
-      <img src={image} alt={alt} className="absolute inset-0 w-full h-full object-cover" />
+      <NextImage src={image} alt={alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
 
       {/* Clipped rather than width-constrained, so the image never needs
           measuring and the two halves always line up pixel for pixel. */}
-      <img
+      <NextImage
         src={beforeImage ?? image}
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover filter grayscale brightness-75"
+        fill
+        sizes="(max-width: 768px) 100vw, 50vw"
+        className="object-cover filter grayscale brightness-75"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       />
 

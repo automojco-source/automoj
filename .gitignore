@@ -50,3 +50,10 @@ next-env.d.ts
 /.cursor/
 /.devin/
 /.claude/
+
+# design source files at the project root — not served by the app (only
+# /public is), and the .psd is well over GitHub's 100MB hard file-size limit
+# on its own. Keep these on your machine / in your design tool, not in git.
+*.psd
+*.ai
+AUTO MOJ SIGN v4 copy.png

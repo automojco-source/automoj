@@ -3,6 +3,7 @@
 import { MessageCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
+import { SITE } from "@/lib/site";
 
 /**
  * The number comes from NEXT_PUBLIC_WHATSAPP_NUMBER. If it is not set the
@@ -14,7 +15,7 @@ export function WhatsAppButton() {
   const { lang } = useLanguage();
   const fa = lang === "FA";
 
-  const phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  const phoneNumber = SITE.whatsapp;
 
   if (!phoneNumber) return null;
   if (pathname?.startsWith("/admin")) return null;

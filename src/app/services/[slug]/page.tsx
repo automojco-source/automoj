@@ -29,17 +29,26 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const service = getService(slug);
-  if (!service) return { title: "Service not found | Auto Moj", robots: { index: false } };
+  if (!service) return { title: "Service not found", robots: { index: false } };
 
   return {
-    title: `${service.title_en} | Auto Moj`,
+    // The root layout's title template appends " | Auto Moj".
+    title: service.title_en,
     description: service.short_en,
     alternates: { canonical: `/services/${service.slug}` },
+    // NOTE: a child's `openGraph` REPLACES the layout's rather than merging
+    // into it, so siteName, locale and url have to be restated here or the
+    // shared card falls back to the homepage's values.
     openGraph: {
       type: "article",
+      siteName: "Auto Moj Accident Repair",
+      locale: "en_GB",
+      url: `/services/${service.slug}`,
       title: `${service.title_en} | Auto Moj`,
       description: service.short_en,
-      images: [{ url: service.img }],
+      images: [
+        { url: service.img, width: 1024, height: 1024, alt: service.title_en },
+      ],
     },
   };
 }

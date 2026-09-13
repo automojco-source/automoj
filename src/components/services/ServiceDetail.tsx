@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import NextImage from "next/image";
 import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import type { Service } from "@/lib/services";
@@ -19,11 +20,14 @@ export function ServiceDetail({ service }: { service: Service }) {
       <section className="relative py-24 bg-[#050505] border-b border-[#1C1C1C] overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20">
           {/* Decorative backdrop — the same image is presented properly below. */}
-          <img
+          <NextImage
             src={service.img}
             alt=""
             aria-hidden="true"
-            className="w-full h-full object-cover filter blur-sm"
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover filter blur-sm"
           />
         </div>
         <div className="container relative z-10 mx-auto px-6 max-w-4xl">
@@ -82,9 +86,12 @@ export function ServiceDetail({ service }: { service: Service }) {
 
           <div className="md:col-span-5 sticky top-28 space-y-6">
             <div className="border border-[#1F1F1F] bg-[#0A0A0A] p-3">
-              <img
+              <NextImage
                 src={service.img}
                 alt={title}
+                width={1024}
+                height={768}
+                sizes="(max-width: 768px) 100vw, 40vw"
                 className="w-full aspect-[4/3] object-cover"
               />
             </div>

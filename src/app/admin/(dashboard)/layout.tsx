@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Users, FileText, Settings } from "lucide-react";
+import { LayoutDashboard, Users, FileText } from "lucide-react";
 import { AdminLogoutButton } from "@/components/admin/AdminLogoutButton";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -20,9 +20,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/customers" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-surface-hover rounded-lg font-medium transition-colors">
             <Users className="w-5 h-5" /> Customers
           </Link>
-          <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-surface-hover rounded-lg font-medium transition-colors">
-            <Settings className="w-5 h-5" /> Settings
-          </Link>
         </nav>
         <div className="p-4 border-t border-border">
           <AdminLogoutButton />
@@ -32,10 +29,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto bg-background">
         <header className="h-20 bg-surface border-b border-border flex items-center justify-between px-8">
-          <h2 className="text-xl font-semibold">Overview</h2>
+          <h2 className="text-xl font-semibold">Auto Moj</h2>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary flex items-center justify-center text-primary font-bold">
-              JD
+            <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary flex items-center justify-center text-primary font-bold text-sm">
+              AM
             </div>
           </div>
         </header>

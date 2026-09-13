@@ -4,8 +4,8 @@ import { ArrowRight } from "lucide-react";
 export const BLOG_POSTS = [
   {
     slug: "how-much-does-car-body-repair-cost-london",
-    title: "How Much Does Car Body Repair Cost in London? (2026 Guide)",
-    excerpt: "A complete breakdown of typical repair costs for scratches, dents, and resprays in the Greater London area.",
+    title: "How Much Does Car Body Repair Cost? (2026 Guide)",
+    excerpt: "What drives the price of repairing scratches, dents and paintwork, and what to ask a bodyshop before you commit.",
     date: "Sep 2, 2026",
     category: "Pricing"
   },
@@ -31,7 +31,7 @@ export default function BlogIndexPage() {
       <div className="max-w-3xl mx-auto text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">Bodyshop Blog & Guides</h1>
         <p className="text-muted-foreground text-lg">
-          Expert advice, repair guides, and industry news from London&rsquo;s premium accident repair centre.
+          Repair guides and plain answers from an independent bodyshop in Watford.
         </p>
       </div>
 

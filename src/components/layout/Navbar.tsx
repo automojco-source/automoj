@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import NextImage from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -14,18 +15,21 @@ export function Navbar() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 h-14 sm:h-16 flex items-center justify-between">
         {/* Left: Roman Bust/Emblem Brand */}
         <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 border border-[#C5A880]/40 rounded overflow-hidden flex items-center justify-center bg-[#0D0D0D] group-hover:border-[#C5A880] transition-all flex-shrink-0 shadow-[0_0_12px_rgba(197,168,128,0.15)]">
-            <img
+          <div className="relative w-8 h-8 sm:w-9 sm:h-9 border border-[#C5A880]/40 rounded overflow-hidden flex items-center justify-center bg-[#0D0D0D] group-hover:border-[#C5A880] transition-all flex-shrink-0 shadow-[0_0_12px_rgba(197,168,128,0.15)]">
+            <NextImage
               src="/images/site-icon-sm.png"
               alt="Auto Moj"
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              fill
+              sizes="36px"
+              priority
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
-          <div className="flex flex-col">
-            <span className="font-serif tracking-[0.2em] sm:tracking-[0.25em] text-xs sm:text-sm text-[#EDEDED] font-semibold">
+          <div className="flex flex-col min-w-0">
+            <span className="font-serif tracking-[0.08em] sm:tracking-[0.25em] text-[10px] sm:text-sm leading-[1.15] text-[#EDEDED] font-semibold">
               {t("brand.name")}
             </span>
-            <span className="text-[7px] sm:text-[8px] tracking-[0.25em] sm:tracking-[0.3em] text-[#C5A880] uppercase -mt-0.5">
+            <span className="text-[6px] sm:text-[8px] tracking-[0.12em] sm:tracking-[0.3em] text-[#C5A880] uppercase mt-0.5 leading-[1.2]">
               {t("brand.tagline")}
             </span>
           </div>
